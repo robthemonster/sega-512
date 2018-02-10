@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "524720347349",
+    "firebase_url": "https://distributed-authentication.firebaseio.com",
+    "project_id": "distributed-authentication",
+    "storage_bucket": "distributed-authentication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524720347349:android:bcca61e74ae98439",
+        "android_client_info": {
+          "package_name": "com.themonster.segaclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "524720347349-catlgfk1drj6u502pp1u6gl0srqldp8f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.themonster.segaclient",
+            "certificate_hash": "ea28d294521ae28c18bb659cab366827991b7cf2"
+          }
+        },
+        {
+          "client_id": "524720347349-2etj9b6rm1um734kqpck674ove960ltj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqpLLkBwpASBRZ4tXC8wjhh-7OcK8geXo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "524720347349-2etj9b6rm1um734kqpck674ove960ltj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
