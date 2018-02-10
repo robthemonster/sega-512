@@ -1,5 +1,6 @@
 package com.themonster.segaclient;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -15,8 +16,9 @@ public class SendMessageActivity extends AppCompatActivity {
     public void sendMessage(View view){
         if (findViewById(R.id.message_edittext) != null && findViewById(R.id.message_edittext) instanceof EditText){
             String message = ((EditText)findViewById(R.id.message_edittext)).getText().toString();
+            String firebaseToken = getSharedPreferences("firebaseToken", Context.MODE_PRIVATE).getString("token", "");
             SendMessageTask sendMessageTask = new SendMessageTask();
-            sendMessageTask.execute(message);
+            sendMessageTask.execute(message, firebaseToken);
         }
     }
 }
