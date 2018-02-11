@@ -6,24 +6,24 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import SEGAMessages.ClientInfo;
+import SEGAMessages.GroupNotification;
 
 /**
- * Created by The Monster on 2/7/2018.
+ * Created by The Monster on 2/11/2018.
  */
 
-public class SendMessageTask extends AsyncTask<String, Boolean, Void> {
+public class SendNotificationToGroupTask extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... strings) {
         String message = strings[0];
-        String firebaseToken = strings[1];
+        String topicName = strings[1];
         try {
             Socket socket = new Socket(ListenForMessages.SERVER_ADDRESS, 6969);
-            ClientInfo clientInfo = new ClientInfo();
-            clientInfo.setFirebaseToken(firebaseToken);
-            clientInfo.setMessage(message);
+            GroupNotification groupNotification = new GroupNotification();
+            groupNotification.setMessage(message);
+            groupNotification.setTopicName(topicName);
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-            outputStream.writeObject(clientInfo);
+            outputStream.writeObject(groupNotification);
             outputStream.flush();
             outputStream.close();
             socket.close();

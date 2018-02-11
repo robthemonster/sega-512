@@ -13,8 +13,9 @@ import java.net.Socket;
  */
 
 public class ListenForMessages extends Thread {
-    public static final String SERVER_ADDRESS = "192.168.1.4";
-    public void run(){
+    public static final String SERVER_ADDRESS = "35.196.224.116";
+
+    public void run() {
         try {
             ServerSocket serverSocket = new ServerSocket(6969);
             while (true) {
@@ -23,7 +24,7 @@ public class ListenForMessages extends Thread {
                 Log.d("ListenForMessages", bufferedReader.readLine());
                 socket.close();
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

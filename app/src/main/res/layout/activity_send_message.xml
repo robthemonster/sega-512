@@ -1,26 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.themonster.segaclient.SendMessageActivity">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/message_edittext"
-            android:text="Enter Message"
-            />
-        <Button
+            android:id="@+id/groupName_edittext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/send_message_button"
-            android:layout_below="@id/message_edittext"
-            android:onClick="sendMessage"
-            android:text="Send Message"
-            />
+            android:hint="GROUP NAME" />
+
+        <EditText
+            android:id="@+id/password_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/groupName_edittext"
+            android:hint="PASSWORD" />
+
+        <Button
+            android:id="@+id/create_group_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/groupName_edittext"
+            android:onClick="createGroup"
+            android:text="CREATE GROUP" />
+
+        <Button
+            android:id="@+id/test_group_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/groupName_edittext"
+            android:layout_toRightOf="@id/create_group_button"
+            android:onClick="sendNotificationToGroup"
+            android:text="SEND NOTIFICATION TO GROUP" />
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

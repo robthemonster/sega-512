@@ -1,10 +1,12 @@
 package com.themonster.segaclient;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class SendMessageActivity extends AppCompatActivity {
     @Override
@@ -13,12 +15,21 @@ public class SendMessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_send_message);
         new Thread(new ListenForMessages()).start();
     }
-    public void sendMessage(View view){
-        if (findViewById(R.id.message_edittext) != null && findViewById(R.id.message_edittext) instanceof EditText){
-            String message = ((EditText)findViewById(R.id.message_edittext)).getText().toString();
-            String firebaseToken = getSharedPreferences("firebaseToken", Context.MODE_PRIVATE).getString("token", "");
-            SendMessageTask sendMessageTask = new SendMessageTask();
-            sendMessageTask.execute(message, firebaseToken);
+
+    public void createGroup(View view) {
+        String groupName = ((EditText) findViewById(R.id.groupName_edittext)).getText().toString();
+        if (!groupName.toLowerCase().equals("Best of Friends".toLowerCase())) //TODO: Check database for existing names
+        {
+            FirebaseMessaging.getInstance().subscribeToTopic(groupName);
+        } else {
+            Toast.makeText(this, "THAT TAKEN", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void sendNotificationToGroup(View view) {
+        String groupName = ((EditText) findViewById(R.id.groupName_edittext)).getText().toString();
+        String message = ((EditText) findViewById(R.id.password_edittext)).getText().toString();
+        SendNotificationToGroupTask task = new SendNotificationToGroupTask();
+        task.execute(message, groupName);
     }
 }
