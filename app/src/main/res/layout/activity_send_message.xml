@@ -5,6 +5,8 @@
     android:layout_height="match_parent"
     tools:context="com.themonster.segaclient.SendMessageActivity">
 
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -38,5 +40,16 @@
             android:layout_toRightOf="@id/create_group_button"
             android:onClick="sendNotificationToGroup"
             android:text="SEND NOTIFICATION TO GROUP" />
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="70dp"
+            android:layout_marginEnd="11dp" />
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
