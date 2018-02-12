@@ -13,7 +13,7 @@ import java.net.Socket;
  */
 
 public class ListenForMessages extends Thread {
-    public static final String SERVER_ADDRESS = "35.196.224.116";
+    public static final String SERVER_ADDRESS = "35.196.224.116"; //Google Cloud IP Address. Test Commit
 
     public void run() {
         try {
