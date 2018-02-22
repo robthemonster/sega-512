@@ -41,6 +41,13 @@
             android:onClick="sendNotificationToGroup"
             android:text="SEND NOTIFICATION TO GROUP" />
 
+        <Button
+            android:id="@+id/getTopicsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/create_group_button"
+            android:onClick="getTopics"
+            android:text="MAKE TOAST W/ TOPICS ;)" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

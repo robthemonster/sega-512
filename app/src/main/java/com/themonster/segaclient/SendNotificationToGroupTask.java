@@ -18,7 +18,7 @@ public class SendNotificationToGroupTask extends AsyncTask<String, Void, Void> {
         String message = strings[0];
         String topicName = strings[1];
         try {
-            Socket socket = new Socket(ListenForMessages.SERVER_ADDRESS, 6969);
+            Socket socket = new Socket(ServerInfo.SEGA_SERVER_DNS, 6969);
             GroupNotification groupNotification = new GroupNotification();
             groupNotification.setMessage(message);
             groupNotification.setTopicName(topicName);

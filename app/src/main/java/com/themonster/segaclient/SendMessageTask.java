@@ -18,7 +18,7 @@ public class SendMessageTask extends AsyncTask<String, Boolean, Void> {
         String message = strings[0];
         String firebaseToken = strings[1];
         try {
-            Socket socket = new Socket(ListenForMessages.SERVER_ADDRESS, 6969);
+            Socket socket = new Socket(ServerInfo.SEGA_SERVER_DNS, 6969);
             ClientInfo clientInfo = new ClientInfo();
             clientInfo.setFirebaseToken(firebaseToken);
             clientInfo.setMessage(message);

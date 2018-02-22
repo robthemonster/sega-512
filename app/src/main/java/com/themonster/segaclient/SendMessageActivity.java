@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -22,24 +21,18 @@ public class SendMessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_send_message);
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
-                                                            // trying to figure out the database and new ROOM environment
+            // trying to figure out the database and new ROOM environment
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick Pressed!");
                 startActivity(new Intent(SendMessageActivity.this, CreateGroup.class));
             }
         });
-        new Thread(new ListenForMessages()).start();
     }
 
     public void createGroup(View view) {
         String groupName = ((EditText) findViewById(R.id.groupName_edittext)).getText().toString();
-        if (!groupName.toLowerCase().equals("Best of Friends".toLowerCase())) //TODO: Check database for existing names
-        {
-            FirebaseMessaging.getInstance().subscribeToTopic(groupName);
-        } else {
-            Toast.makeText(this, "THAT TAKEN", Toast.LENGTH_SHORT).show();
-        }
+        FirebaseMessaging.getInstance().subscribeToTopic(groupName);
     }
 
     public void sendNotificationToGroup(View view) {
