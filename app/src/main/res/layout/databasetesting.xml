@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -9,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
-        android:text="Add Group: "/>
+        android:text="Login: "/>
 
         <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -18,9 +19,13 @@
 
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
-            android:hint="Group Name"
+            android:hint="Username"
             android:layout_height="wrap_content"
-            android:id = "@+id/group_name"/>
+            android:imeOptions="actionNext"
+            android:nextFocusDown="@id/PasswordField"
+            android:maxLines="1"
+            android:id = "@+id/UsernameField"/>
+            <requestFocus/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -33,11 +38,17 @@
             <android.support.design.widget.TextInputEditText
                 android:layout_width="match_parent"
                 android:hint="Password"
+                android:inputType="textPassword"
+                android:imeOptions="actionDone"
                 android:layout_height="wrap_content"
-                android:id = "@+id/indiv_password"/>
+                android:id = "@+id/PasswordField"/>
 
         </android.support.design.widget.TextInputLayout>
 
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
     <!--
