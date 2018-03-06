@@ -15,6 +15,7 @@ public class SendMessageActivity extends AppCompatActivity {
     private static final String TAG = "Main Activity";
 
     FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +26,7 @@ public class SendMessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick Pressed!");
-                startActivity(new Intent(SendMessageActivity.this, CreateGroup.class));
+                startActivity(new Intent(SendMessageActivity.this, CreateUserActivity.class));
             }
         });
     }
@@ -40,5 +41,12 @@ public class SendMessageActivity extends AppCompatActivity {
         String message = ((EditText) findViewById(R.id.password_edittext)).getText().toString();
         SendNotificationToGroupTask task = new SendNotificationToGroupTask();
         task.execute(message, groupName);
+    }
+
+    public void sendTestRequest(View view) {
+        //SendMessageTask sendMessageTask = new SendMessageTask();
+        //sendMessageTask.execute("test request", getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
+        SendCreateUserRequestTask test = new SendCreateUserRequestTask();
+        test.execute(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
     }
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -9,55 +8,50 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:text="Login: "/>
+        android:text="Login: "
+        android:textSize="24sp" />
 
-        <android.support.design.widget.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/usernameField"
             android:layout_width="match_parent"
-            android:hint="Username"
             android:layout_height="wrap_content"
+            android:hint="Username"
             android:imeOptions="actionNext"
-            android:nextFocusDown="@id/PasswordField"
+            android:inputType="text"
             android:maxLines="1"
-            android:id = "@+id/UsernameField"/>
+            android:nextFocusForward="@id/passwordField">
             <requestFocus/>
+        </android.support.design.widget.TextInputEditText>
 
-        </android.support.design.widget.TextInputLayout>
-
-
-        <android.support.design.widget.TextInputLayout
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/passwordField"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:maxLines="1" />
 
-
-            <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:imeOptions="actionDone"
-                android:layout_height="wrap_content"
-                android:id = "@+id/PasswordField"/>
-
-        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
 
     <ProgressBar
+        android:id="@+id/spinnyDoodle"
         style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="wrap_content"
+        android:visibility="invisible" />
 
     <!--
     // for now, simply check if the group password matches. //Todo
     -->
 
-
 </LinearLayout>
 
-<!--
-// tutorial from https://www.youtube.com/watch?v=CTBiwKlO5IU
--->
+    <!--
+    // tutorial from https://www.youtube.com/watch?v=CTBiwKlO5IU
+    -->

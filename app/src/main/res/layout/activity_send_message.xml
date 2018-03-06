@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     tools:context="com.themonster.segaclient.SendMessageActivity">
 
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -46,8 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/create_group_button"
-            android:onClick="getTopics"
-            android:text="MAKE TOAST W/ TOPICS ;)" />
+            android:onClick="sendTestRequest"
+            android:text="TEST REQUEST RESPONSE" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

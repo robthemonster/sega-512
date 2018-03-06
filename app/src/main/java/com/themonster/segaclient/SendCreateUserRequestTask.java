@@ -6,25 +6,27 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import SEGAMessages.ClientInfo;
+import SEGAMessages.CreateUserRequest;
 
 /**
- * Created by The Monster on 2/7/2018.
+ * Created by The Monster on 3/5/2018.
  */
 
-@Deprecated
-public class SendMessageTask extends AsyncTask<String, Boolean, Void> {
+public class SendCreateUserRequestTask extends AsyncTask<String, Void, Void> {
+
     @Override
     protected Void doInBackground(String... strings) {
-        String message = strings[0];
-        String firebaseToken = strings[1];
+        String firebaseToken = strings[0];
+        String username = strings[1];
+        String password = strings[2];
+        CreateUserRequest createUserRequest = new CreateUserRequest();
+        createUserRequest.setUsername(username);
+        createUserRequest.setPassword(password);
+        createUserRequest.setFirebaseToken(firebaseToken);
         try {
             Socket socket = new Socket(ServerInfo.SEGA_SERVER_DNS, 6969);
-            ClientInfo clientInfo = new ClientInfo();
-            clientInfo.setFirebaseToken(firebaseToken);
-            clientInfo.setMessage(message);
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-            outputStream.writeObject(clientInfo);
+            outputStream.writeObject(createUserRequest);
             outputStream.flush();
             outputStream.close();
             socket.close();
