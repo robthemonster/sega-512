@@ -42,11 +42,4 @@ public class SendMessageActivity extends AppCompatActivity {
         SendNotificationToGroupTask task = new SendNotificationToGroupTask();
         task.execute(message, groupName);
     }
-
-    public void sendTestRequest(View view) {
-        //SendMessageTask sendMessageTask = new SendMessageTask();
-        //sendMessageTask.execute("test request", getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
-        SendCreateUserRequestTask test = new SendCreateUserRequestTask();
-        test.execute(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
-    }
 }

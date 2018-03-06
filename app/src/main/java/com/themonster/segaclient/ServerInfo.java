@@ -5,5 +5,5 @@ package com.themonster.segaclient;
  */
 
 public class ServerInfo {
-    public static final String SEGA_SERVER_DNS = "192.168.1.2";//"ec2-18-219-109-42.us-east-2.compute.amazonaws.com";
+    public static final String SEGA_SERVER_DNS = "ec2-18-219-109-42.us-east-2.compute.amazonaws.com";
 }
