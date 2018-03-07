@@ -4,26 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.themonster.segaclient.DashboardActivity">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
             android:id="@+id/usernameDashboard"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
+
         <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/groupListDashBoard"
-            android:layout_below="@id/usernameDashboard"
-            />
-        <ProgressBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/usernameDashboard" />
+
+        <ProgressBar
             style="?android:attr/progressBarStyle"
-            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/groupListDashBoard"
-            />
+            android:visibility="invisible" />
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

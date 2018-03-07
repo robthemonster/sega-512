@@ -21,6 +21,7 @@ import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import SEGAMessages.CreateUserRequest;
 import SEGAMessages.CreateUserResponse;
 
 /**
@@ -31,6 +32,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
     private static Toast createUserFailedToast;
     boolean passwordsmatch = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         createUserFailedToast = Toast.makeText(getApplicationContext(), "Username taken!", Toast.LENGTH_SHORT);
@@ -78,28 +80,29 @@ public class CreateUserActivity extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
                 }
-                else*/ if (/*passwordsmatch && */id == EditorInfo.IME_ACTION_DONE) {
+                else*/
+                if (/*passwordsmatch && */id == EditorInfo.IME_ACTION_DONE) {
                     passwordConfirmEditText.setEnabled(false);
                     usernameEditText.setEnabled(false);
                     passwordEditText.setEnabled(false);
 
-                    if(validateUserName() != 0) //
+                    if (validateUserName() < 0) //
                     {
                         passwordConfirmEditText.setEnabled(true);
                         usernameEditText.setEnabled(true);
                         passwordEditText.setEnabled(true);
-                    }
-                    else if (passwordConfirmEditText.getText().toString().equals(passwordEditText.getText().toString())) {
+                    } else if (passwordConfirmEditText.getText().toString().equals(passwordEditText.getText().toString())) {
 
                         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         if (inputMethodManager != null) {
                             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
                         }
-                        String username = usernameEditText.getText().toString();
-                        String password = passwordEditText.getText().toString();
-                        String firebaseToken = getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", "");
-                        SendCreateUserRequestTask task = new SendCreateUserRequestTask();
-                        task.execute(firebaseToken, username, password);
+                        CreateUserRequest request = new CreateUserRequest();
+                        request.setUsername(usernameEditText.getText().toString());
+                        request.setPassword(passwordEditText.getText().toString());
+                        request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
+                        SendRequestToServerTask task = new SendRequestToServerTask(request);
+                        task.execute();
                         findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.VISIBLE);
                         return true;
                     } else // the passwords do not match
@@ -148,6 +151,9 @@ public class CreateUserActivity extends AppCompatActivity {
         finish();
     }
 
+    public boolean validatePassword() {
+        return findViewById(R.id.passwordConfirmCreateUser).toString().length() > 5;
+    }
     public int validateUserName()
     {
 

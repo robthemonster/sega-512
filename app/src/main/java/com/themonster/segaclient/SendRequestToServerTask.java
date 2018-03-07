@@ -15,7 +15,7 @@ public class SendRequestToServerTask extends AsyncTask<Void, Void, Void> {
 
     private Serializable request;
 
-    public SendRequestToServerTask(Serializable request){
+    public SendRequestToServerTask(Serializable request) {
         this.request = request;
     }
 
