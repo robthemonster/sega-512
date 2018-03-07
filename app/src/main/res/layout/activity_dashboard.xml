@@ -15,7 +15,7 @@
             android:layout_height="wrap_content" />
 
         <ListView
-            android:id="@+id/groupListDashBoard"
+            android:id="@+id/groupListDashboard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/usernameDashboard" />
@@ -24,7 +24,7 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/groupListDashBoard"
+            android:layout_below="@id/groupListDashboard"
             android:visibility="invisible" />
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
