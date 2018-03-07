@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import SEGAMessages.CreateUserResponse;
-import SEGAMessages.TestResponse;
 import SEGAMessages.UserLoginResponse;
 
 /**
@@ -30,11 +29,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             byte[] serializedMessage = Base64.decode(remoteMessage.getData().get("serializedMessage"), Base64.DEFAULT);
             ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(serializedMessage));
             Object message = objectInputStream.readObject();
-            if (message instanceof TestResponse) {
-                TestResponse response = (TestResponse) message;
-                Log.d("Response from server", response.getPayload() + " : " + response.getMessageBody());
-                return;
-            }
             if (message instanceof CreateUserResponse) {
                 CreateUserResponse response = (CreateUserResponse) message;
                 Intent intent = new Intent();

@@ -4,26 +4,27 @@ import android.os.AsyncTask;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 
-import SEGAMessages.GroupNotification;
-
 /**
- * Created by The Monster on 2/11/2018.
+ * Created by The Monster on 3/7/2018.
  */
 
-public class SendNotificationToGroupTask extends AsyncTask<String, Void, Void> {
+public class SendRequestToServerTask extends AsyncTask<Void, Void, Void> {
+
+    private Serializable request;
+
+    public SendRequestToServerTask(Serializable request){
+        this.request = request;
+    }
+
     @Override
-    protected Void doInBackground(String... strings) {
-        String message = strings[0];
-        String topicName = strings[1];
+    protected Void doInBackground(Void... voids) {
         try {
             Socket socket = new Socket(ServerInfo.SEGA_SERVER_DNS, 6969);
-            GroupNotification groupNotification = new GroupNotification();
-            groupNotification.setMessage(message);
-            groupNotification.setTopicName(topicName);
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-            outputStream.writeObject(groupNotification);
+            outputStream.writeObject(request);
             outputStream.flush();
             outputStream.close();
             socket.close();

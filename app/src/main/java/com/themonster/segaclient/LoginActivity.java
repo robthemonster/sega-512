@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import SEGAMessages.UserLoginRequest;
 import SEGAMessages.UserLoginResponse;
 
 public class LoginActivity extends AppCompatActivity {
@@ -53,11 +54,12 @@ public class LoginActivity extends AppCompatActivity {
                     if (inputMethodManager != null) {
                         inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
                     }
-                    String username = usernameEditText.getText().toString();
-                    String password = passwordEditText.getText().toString();
-                    String firebaseToken = getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", "");
-                    SendUserLoginRequestTask task = new SendUserLoginRequestTask();
-                    task.execute(firebaseToken, username, password);
+                    UserLoginRequest request = new UserLoginRequest();
+                    request.setUsername(usernameEditText.getText().toString());
+                    request.setPassword(passwordEditText.getText().toString());
+                    request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
+                    SendRequestToServerTask task = new SendRequestToServerTask(request);
+                    task.execute();
                     findViewById(R.id.spinnyDoodleLogin).setVisibility(View.VISIBLE);
                     return true;
                 }
