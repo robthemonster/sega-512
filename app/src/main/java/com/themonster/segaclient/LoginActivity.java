@@ -5,10 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -16,24 +17,34 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import SEGAMessages.CreateUserResponse;
+import SEGAMessages.UserLoginResponse;
 
-/**
- * Created by CJ Hernaez on 2/12/2018.
- */
+public class LoginActivity extends AppCompatActivity {
 
-public class CreateUserActivity extends AppCompatActivity {
+    private static final String TAG = "Main Activity";
+
+    FloatingActionButton fab;
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.createuser);
-        TextInputEditText et = findViewById(R.id.passwordCreateUser);
-        et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        setContentView(R.layout.login);
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
+            // trying to figure out the database and new ROOM environment
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick Pressed!");
+                startActivity(new Intent(LoginActivity.this, CreateUserActivity.class));
+            }
+        });
+        TextInputEditText editText = findViewById(R.id.passwordLogin);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE) {
-                    EditText usernameEditText = findViewById(R.id.usernameCreateUser);
-                    EditText passwordEditText = findViewById(R.id.passwordCreateUser);
+                    EditText usernameEditText = findViewById(R.id.usernameLogin);
+                    EditText passwordEditText = findViewById(R.id.passwordLogin);
                     usernameEditText.setEnabled(false);
                     passwordEditText.setEnabled(false);
                     InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -43,29 +54,34 @@ public class CreateUserActivity extends AppCompatActivity {
                     String username = usernameEditText.getText().toString();
                     String password = passwordEditText.getText().toString();
                     String firebaseToken = getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", "");
-                    SendCreateUserRequestTask task = new SendCreateUserRequestTask();
+                    SendUserLoginRequestTask task = new SendUserLoginRequestTask();
                     task.execute(firebaseToken, username, password);
-                    findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.VISIBLE);
+                    findViewById(R.id.spinnyDoodleLogin).setVisibility(View.VISIBLE);
                     return true;
                 }
                 return false;
             }
         });
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("CreateUserResponse");
+        intentFilter.addAction("UserLoginResponse");
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                CreateUserResponse response = (CreateUserResponse) intent.getSerializableExtra("response");
+                UserLoginResponse response = (UserLoginResponse) intent.getSerializableExtra("response");
                 if (response != null) {
-                    responseReceieved(); //TODO: Account for if create user was unsuccessful
+                    if (response.isSucceeded()) { //TODO: account for if login failed
+                        launchDashBoard();
+                    }
                 }
             }
         }, intentFilter);
     }
 
-    public void responseReceieved() {
-        findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.INVISIBLE);
-        onBackPressed();
+    private void launchDashBoard() {
+        findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
+        Intent intent = new Intent(this, DashboardActivity.class);
+        intent.putExtra("username", ((EditText) findViewById(R.id.usernameLogin)).getText().toString());
+        startActivity(intent);
     }
+
 }
