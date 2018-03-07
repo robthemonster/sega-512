@@ -16,6 +16,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import SEGAMessages.UserLoginResponse;
 
@@ -23,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "Main Activity";
 
+    private static Toast loginFailedToast;
     FloatingActionButton fab;
 
     @Override
@@ -62,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+        loginFailedToast = Toast.makeText(getApplicationContext(), "login failed", Toast.LENGTH_SHORT);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("UserLoginResponse");
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
@@ -71,10 +74,20 @@ public class LoginActivity extends AppCompatActivity {
                 if (response != null) {
                     if (response.isSucceeded()) { //TODO: account for if login failed
                         launchDashBoard();
+                    } else {
+                        loginFailedToast.show();
+                        resetFields();
                     }
                 }
             }
         }, intentFilter);
+    }
+
+    private void resetFields() {
+        ((EditText) findViewById(R.id.passwordLogin)).getText().clear();
+        findViewById(R.id.usernameLogin).setEnabled(true);
+        findViewById(R.id.passwordLogin).setEnabled(true);
+        findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
     }
 
     private void launchDashBoard() {

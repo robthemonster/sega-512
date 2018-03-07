@@ -58,13 +58,17 @@ public class CreateUserActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 CreateUserResponse response = (CreateUserResponse) intent.getSerializableExtra("response");
                 if (response != null) {
-                    responseReceieved(); //TODO: Account for if create user was unsuccessful
+                    if (response.isSucceeded()) {
+                        returnToLogin();
+                    } else {
+                        //TODO: Account for if create user was unsuccessful
+                    }
                 }
             }
         }, intentFilter);
     }
 
-    public void responseReceieved() {
+    public void returnToLogin() {
         findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.INVISIBLE);
         onBackPressed();
     }
