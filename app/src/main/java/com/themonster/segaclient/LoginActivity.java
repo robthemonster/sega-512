@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                 UserLoginResponse response = (UserLoginResponse) intent.getSerializableExtra("response");
                 if (response != null) {
                     if (response.isSucceeded()) { //TODO: account for if login failed
-                        launchDashBoard();
+                        launchDashBoard(response.getUsername());
                     } else {
                         loginFailedToast.show();
                         resetFields();
@@ -92,10 +92,10 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
     }
 
-    private void launchDashBoard() {
+    private void launchDashBoard(String username) {
         findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
         Intent intent = new Intent(this, DashboardActivity.class);
-        intent.putExtra("username", ((EditText) findViewById(R.id.usernameLogin)).getText().toString());
+        intent.putExtra("username", username);
         startActivity(intent);
     }
 

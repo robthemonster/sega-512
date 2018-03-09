@@ -16,6 +16,7 @@ import java.io.ObjectInputStream;
 
 import SEGAMessages.CreateUserResponse;
 import SEGAMessages.GetGroupsForUserResponse;
+import SEGAMessages.GetUsersForGroupResponse;
 import SEGAMessages.UserLoginResponse;
 
 /**
@@ -54,6 +55,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 intent.putExtra("response", response);
                 intent.setAction("GetGroupsForUserResponse");
                 Log.d("RPOOEENSE", "GET GROUPS REPONSE");
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+                return;
+            }
+            if (message instanceof GetUsersForGroupResponse) {
+                GetUsersForGroupResponse response = (GetUsersForGroupResponse) message;
+                Intent intent = new Intent();
+                intent.putExtra("response", response);
+                intent.setAction("GetUsersForGroupResponse");
+                Log.d("DFDSIFJE REEPONSEE ", " users 4 tha grup");
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
                 return;
             }
