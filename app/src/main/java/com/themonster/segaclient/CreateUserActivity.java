@@ -41,38 +41,8 @@ public class CreateUserActivity extends AppCompatActivity {
         createUserFailedToast = Toast.makeText(getApplicationContext(), "Username taken!", Toast.LENGTH_SHORT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.createuser);
+
         TextInputEditText et = findViewById(R.id.passwordConfirmCreateUser);
-        /*et.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Log.d("Uh", "Huh...");
-                EditText passwordConfirmEditText = findViewById(R.id.passwordConfirmCreateUser);
-                EditText passwordEditText = findViewById(R.id.passwordCreateUser);
-                if (passwordConfirmEditText.getText().length() > 0)
-                {
-                    if (passwordsmatch && !passwordConfirmEditText.getText().toString().equals(passwordEditText.getText().toString()))
-                    {// if marked as matching and now do not match
-                        passwordsmatch = false;
-                        passwordConfirmEditText.setHint("Password Must Match!");
-                    }
-                    else if (!passwordsmatch && passwordConfirmEditText.getText().toString().equals(passwordEditText.getText().toString()))
-                    {
-                        passwordsmatch = true;
-                        passwordConfirmEditText.setHint("Passwords Match!");
-                    }
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });*/
         et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {

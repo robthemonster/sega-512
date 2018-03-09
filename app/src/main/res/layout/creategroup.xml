@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create Group Activity"
+            android:id="@+id/create_group_title"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/create_group_groupname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Group Name"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1"
+                >
+
+                <requestFocus />
+            </android.support.design.widget.TextInputEditText>
+        </android.support.design.widget.TextInputLayout>
+
+        <ProgressBar
+            android:id="@+id/spinnyDoodleCreateGroup"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" />
+
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
