@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,7 +30,7 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        String username = getIntent().getStringExtra("username");
+        final String username = getIntent().getStringExtra("username");
         if (username != null) {
             ((TextView) findViewById(R.id.usernameDashboard)).setText(username);
         }
@@ -46,8 +47,11 @@ public class DashboardActivity extends AppCompatActivity {
                 GetGroupsForUserResponse response = (GetGroupsForUserResponse) intent.getSerializableExtra("response");
                 groups.clear();
                 groups.addAll(response.getGroups());
-                ArrayAdapter<String> adapter = (ArrayAdapter<String>) ((ListView) findViewById(R.id.groupListDashboard)).getAdapter();
-                adapter.notifyDataSetChanged();
+                ListView groupList = findViewById(R.id.groupListDashboard);
+                if (groupList.getAdapter() instanceof ArrayAdapter) {
+                    ArrayAdapter adapter = (ArrayAdapter) groupList.getAdapter();
+                    adapter.notifyDataSetChanged();
+                }
             }
         }, intentFilter);
 
@@ -63,6 +67,16 @@ public class DashboardActivity extends AppCompatActivity {
                 TextView groupNameTextView = convertView.findViewById(R.id.groupNameListItem);
                 groupNameTextView.setText(item);
                 return convertView;
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String groupSelected = adapterView.getItemAtPosition(i).toString();
+                Intent intent = new Intent(DashboardActivity.this, GroupActivity.class);
+                intent.putExtra("username", username);
+                intent.putExtra("group", groupSelected);
+                startActivity(intent);
             }
         });
     }
