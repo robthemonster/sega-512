@@ -136,7 +136,7 @@ public class CreateUserActivity extends AppCompatActivity {
         if (et.length() < 3)
         {
             Toast.makeText(CreateUserActivity.this, "Username must be at least 3 characters", Toast.LENGTH_SHORT).show();
-            return R.integer.short_username_error;
+            return R.integer.short_username_error;//TODO: dont forget about this cj
         }
         if (et.contains("  "))
         {

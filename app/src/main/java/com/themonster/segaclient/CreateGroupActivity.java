@@ -102,19 +102,19 @@ public class CreateGroupActivity extends AppCompatActivity{
         if (et.length() < 3)
         {
             Toast.makeText(CreateGroupActivity.this, "Group Name must be at least 3 characters", Toast.LENGTH_SHORT).show();
-            return R.integer.short_username_error;
+            return getResources().getInteger(R.integer.short_username_error);
         }
         if (et.contains("  "))
         {
             Toast.makeText(CreateGroupActivity.this, "Group Name cannot contain consecutive spaces", Toast.LENGTH_SHORT).show();
-            return R.integer.double_space_error;
+            return getResources().getInteger(R.integer.double_space_error);
         }
         Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(et);
         if (m.find())//https://stackoverflow.com/questions/1795402/java-check-a-string-if-there-is-a-special-character-in-it
         {
             Toast.makeText(CreateGroupActivity.this, "Group Name cannot contain special characters", Toast.LENGTH_SHORT).show();
-            return R.integer.special_character_error;
+            return getResources().getInteger(R.integer.special_character_error);
         }
         return 0;
     }

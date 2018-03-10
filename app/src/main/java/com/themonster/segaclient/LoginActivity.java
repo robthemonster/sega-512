@@ -42,19 +42,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab2 = findViewById(R.id.fab2);
-        fab2.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
-            // trying to figure out the database and new ROOM environment
-            @Override
-            public void onClick(View view) {
-                TextInputEditText tv = findViewById(R.id.usernameLogin);
-                Log.d("CreateGroup ", "onClick Pressed!");
-                Intent intent = new Intent(LoginActivity.this, CreateGroupActivity.class).putExtra("username", tv.getText().toString());
-                startActivity(intent);
-            }
-        });
-
-
 
         TextInputEditText editText = findViewById(R.id.passwordLogin);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {

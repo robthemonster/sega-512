@@ -7,8 +7,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +78,17 @@ public class DashboardActivity extends AppCompatActivity {
                 Intent intent = new Intent(DashboardActivity.this, GroupActivity.class);
                 intent.putExtra("username", username);
                 intent.putExtra("group", groupSelected);
+                startActivity(intent);
+            }
+        });
+        FloatingActionButton fab2 = findViewById(R.id.fab2);
+        fab2.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
+            // trying to figure out the database and new ROOM environment
+            @Override
+            public void onClick(View view) {
+                Log.d("CreateGroup ", "onClick Pressed!");
+                Intent intent = new Intent(DashboardActivity.this, CreateGroupActivity.class);
+                intent.putExtra("username", getIntent().getStringExtra("username"));
                 startActivity(intent);
             }
         });
