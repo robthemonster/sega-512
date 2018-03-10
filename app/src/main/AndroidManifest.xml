@@ -34,6 +34,7 @@
             android:theme="@style/AppTheme.FullScreen"></activity>
         <activity android:name=".DashboardActivity" />
         <activity android:name=".GroupActivity"></activity>
+        <activity android:name=".CreateGroupActivity"></activity>
     </application>
 
 </manifest>

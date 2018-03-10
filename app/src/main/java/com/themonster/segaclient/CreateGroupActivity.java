@@ -1,9 +1,14 @@
 package com.themonster.segaclient;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -17,7 +22,10 @@ import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import SEGAMessages.CreateGroupRequest;
+import SEGAMessages.CreateGroupResponse;
 import SEGAMessages.CreateUserRequest;
+import SEGAMessages.CreateUserResponse;
 
 /**
  * Created by CJ Hernaez on 3/9/2018.
@@ -28,33 +36,31 @@ public class CreateGroupActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        final String username = getIntent().getStringExtra("username");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.creategroup);
 
 
-        TextInputEditText et = findViewById(R.id.passwordConfirmCreateUser);
+
+        final TextInputEditText et = findViewById(R.id.create_group_groupname);
         et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 EditText groupName = findViewById(R.id.create_group_groupname);
-
                 if (id == EditorInfo.IME_ACTION_DONE) {
                     groupName.setEnabled(false);
-
-
                     if (validateGroup() < 0) //
                     {
                         groupName.setEnabled(true);
 
                     } else {
-
                         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         if (inputMethodManager != null) {
                             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
                         }
-                        CreateUserRequest request = new CreateUserRequest();
-                       // request.setUsername(usernameEditText.getText().toString());
-                      //  request.setPassword(passwordEditText.getText().toString());
+                        CreateGroupRequest request = new CreateGroupRequest();
+                        request.setCreator(username);
+                        request.setGroupName(groupName.getText().toString());
                         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
                         SendRequestToServerTask task = new SendRequestToServerTask(request);
                         task.execute();
@@ -65,6 +71,28 @@ public class CreateGroupActivity extends AppCompatActivity{
                 return false;
             }
         });
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("CreateGroupResponse");
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                CreateGroupResponse response = (CreateGroupResponse) intent.getSerializableExtra("response");
+                if (response != null) {
+                    if (response.isSucceeded()) {
+                        Toast.makeText(CreateGroupActivity.this, "Group"+ et.getText().toString()+ "created.", Toast.LENGTH_SHORT).show();
+                        findViewById(R.id.create_group_groupname).setEnabled(true);
+                    } else {
+                        //TODO: Account for if create user was unsuccessful
+                       // createUserFailedToast.show();
+                        Toast.makeText(CreateGroupActivity.this, "Group already Exists.", Toast.LENGTH_SHORT).show();
+                        findViewById(R.id.create_group_groupname).setEnabled(true);
+                        //resetFields();
+                    }
+                    findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.INVISIBLE);
+                }
+            }
+        }, intentFilter);
     }
 
     public boolean validatePassword() {

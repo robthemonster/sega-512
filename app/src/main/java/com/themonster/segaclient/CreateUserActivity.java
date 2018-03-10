@@ -36,7 +36,7 @@ public class CreateUserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
-        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.bg));
+        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.splash));
         createUserFailedToast = Toast.makeText(getApplicationContext(), "Username taken!", Toast.LENGTH_SHORT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.createuser);
