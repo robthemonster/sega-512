@@ -36,7 +36,7 @@ public class GroupActivity extends AppCompatActivity {
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         task.execute();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("GetUsersForGroupResponse");
+        intentFilter.addAction(GetUsersForGroupResponse.TYPE);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

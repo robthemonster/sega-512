@@ -91,7 +91,7 @@ public class CreateUserActivity extends AppCompatActivity {
             }
         });
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("CreateUserResponse");
+        intentFilter.addAction(CreateUserResponse.TYPE);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

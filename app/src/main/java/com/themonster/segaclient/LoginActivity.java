@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
             // trying to figure out the database and new ROOM environment
             @Override
             public void onClick(View view) {
-                TextInputEditText tv = (TextInputEditText)findViewById(R.id.usernameLogin);
+                TextInputEditText tv = findViewById(R.id.usernameLogin);
                 Log.d("CreateGroup ", "onClick Pressed!");
                 Intent intent = new Intent(LoginActivity.this, CreateGroupActivity.class).putExtra("username", tv.getText().toString());
                 startActivity(intent);
@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         });
         loginFailedToast = Toast.makeText(getApplicationContext(), "login failed", Toast.LENGTH_SHORT);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("UserLoginResponse");
+        intentFilter.addAction(UserLoginResponse.TYPE);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

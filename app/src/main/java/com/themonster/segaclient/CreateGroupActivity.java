@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,8 +23,6 @@ import java.util.regex.Pattern;
 
 import SEGAMessages.CreateGroupRequest;
 import SEGAMessages.CreateGroupResponse;
-import SEGAMessages.CreateUserRequest;
-import SEGAMessages.CreateUserResponse;
 
 /**
  * Created by CJ Hernaez on 3/9/2018.
@@ -64,7 +61,7 @@ public class CreateGroupActivity extends AppCompatActivity{
                         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
                         SendRequestToServerTask task = new SendRequestToServerTask(request);
                         task.execute();
-                        findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.VISIBLE);
+                        findViewById(R.id.spinnyDoodleCreateGroup).setVisibility(View.VISIBLE);
                         return true;
                     }
                 }
@@ -73,7 +70,7 @@ public class CreateGroupActivity extends AppCompatActivity{
         });
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("CreateGroupResponse");
+        intentFilter.addAction(CreateGroupResponse.TYPE);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -89,19 +86,16 @@ public class CreateGroupActivity extends AppCompatActivity{
                         findViewById(R.id.create_group_groupname).setEnabled(true);
                         //resetFields();
                     }
-                    findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.spinnyDoodleCreateGroup).setVisibility(View.INVISIBLE);
                 }
             }
         }, intentFilter);
     }
 
-    public boolean validatePassword() {
-        return findViewById(R.id.passwordConfirmCreateUser).toString().length() > 5;
-    }
     public int validateGroup()
     {
 
-        String et = ((EditText)findViewById(R.id.usernameCreateUser)).getText().toString();
+        String et = ((TextInputEditText) findViewById(R.id.create_group_groupname)).getText().toString();
 
         Log.d("ValidateGroup", "String Length =" + et.length());
 

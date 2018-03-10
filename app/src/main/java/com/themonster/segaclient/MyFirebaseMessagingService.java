@@ -14,10 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import SEGAMessages.CreateUserResponse;
-import SEGAMessages.GetGroupsForUserResponse;
-import SEGAMessages.GetUsersForGroupResponse;
-import SEGAMessages.UserLoginResponse;
+import SEGAMessages.Response;
 
 /**
  * Created by The Monster on 2/7/2018.
@@ -31,41 +28,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             byte[] serializedMessage = Base64.decode(remoteMessage.getData().get("serializedMessage"), Base64.DEFAULT);
             ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(serializedMessage));
             Object message = objectInputStream.readObject();
-            if (message instanceof CreateUserResponse) {
-                CreateUserResponse response = (CreateUserResponse) message;
-                Intent intent = new Intent();
-                intent.putExtra("response", response);
-                intent.setAction("CreateUserResponse");
-                Log.d("REPONSE", " U GOT REPONSE");
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-                return;
-            }
-            if (message instanceof UserLoginResponse) {
-                UserLoginResponse response = (UserLoginResponse) message;
-                Intent intent = new Intent();
-                intent.putExtra("response", response);
-                intent.setAction("UserLoginResponse");
-                Log.d("REPONSE", "U GOT USER LOGGING REPOSE");
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-                return;
-            }
-            if (message instanceof GetGroupsForUserResponse) {
-                GetGroupsForUserResponse response = (GetGroupsForUserResponse) message;
-                Intent intent = new Intent();
-                intent.putExtra("response", response);
-                intent.setAction("GetGroupsForUserResponse");
-                Log.d("RPOOEENSE", "GET GROUPS REPONSE");
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-                return;
-            }
-            if (message instanceof GetUsersForGroupResponse) {
-                GetUsersForGroupResponse response = (GetUsersForGroupResponse) message;
-                Intent intent = new Intent();
-                intent.putExtra("response", response);
-                intent.setAction("GetUsersForGroupResponse");
-                Log.d("DFDSIFJE REEPONSEE ", " users 4 tha grup");
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-                return;
+            if (message instanceof Response) {
+                Response response = (Response) message;
+                broadcastResponseLocally(response);
             }
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
@@ -81,4 +46,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             manager.notify(0, builder.build());
         }
     }
+
+    private void broadcastResponseLocally(Response response) {
+        Intent intent = new Intent();
+        intent.putExtra("response", response);
+        intent.setAction(response.type());
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+    }
+
+
 }

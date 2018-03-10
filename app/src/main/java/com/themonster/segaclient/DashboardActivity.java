@@ -40,7 +40,7 @@ public class DashboardActivity extends AppCompatActivity {
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         task.execute();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("GetGroupsForUserResponse");
+        intentFilter.addAction(GetGroupsForUserResponse.TYPE);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
