@@ -77,6 +77,15 @@
         android:layout_height="wrap_content"
         android:visibility="invisible" />
 
+    <Button
+        android:id="@+id/create_user_phantom_button"
+        android:layout_marginTop="80dp"
+        android:layout_width="141dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/phantom_button"
+        android:textAlignment="center" />
+
     <!--
     // for now, simply check if the group password matches. //Todo
     -->

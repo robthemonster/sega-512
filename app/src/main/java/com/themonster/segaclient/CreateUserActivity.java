@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +41,17 @@ public class CreateUserActivity extends AppCompatActivity {
         createUserFailedToast = Toast.makeText(getApplicationContext(), "Username taken!", Toast.LENGTH_SHORT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.createuser);
+
+        Button fab = findViewById(R.id.create_user_phantom_button);
+        fab.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
+            // trying to figure out the database and new ROOM environment
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(CreateUserActivity.this, SplashScreenActivity.class));
+            }
+        });
+
+
 
         TextInputEditText et = findViewById(R.id.passwordConfirmCreateUser);
         et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
