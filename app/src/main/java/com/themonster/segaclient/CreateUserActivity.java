@@ -1,5 +1,6 @@
 package com.themonster.segaclient;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,9 +17,11 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,15 +36,19 @@ public class CreateUserActivity extends AppCompatActivity {
 
     private static Toast createUserFailedToast;
     boolean passwordsmatch = true;
+    ProgressDialog dialog;
+    Random random;
+    int size;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
-        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.splash));
+        dialog  = new ProgressDialog(CreateUserActivity.this);
+        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.loginsplash));
         createUserFailedToast = Toast.makeText(getApplicationContext(), "Username taken!", Toast.LENGTH_SHORT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.createuser);
-
+        random = new Random();
+        size = getResources().getStringArray(R.array.loading_memes).length;
         Button fab = findViewById(R.id.create_user_phantom_button);
         fab.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
             // trying to figure out the database and new ROOM environment
@@ -77,6 +84,11 @@ public class CreateUserActivity extends AppCompatActivity {
                         passwordEditText.setEnabled(true);
                     } else if (passwordConfirmEditText.getText().toString().equals(passwordEditText.getText().toString())) {
 
+
+
+
+
+
                         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         if (inputMethodManager != null) {
                             inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
@@ -87,6 +99,12 @@ public class CreateUserActivity extends AppCompatActivity {
                         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
                         SendRequestToServerTask task = new SendRequestToServerTask(request);
                         task.execute();
+                        dialog.setIndeterminate(true);
+                        dialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.phantom_spinner));
+                        dialog.setTitle("Please Wait");
+                        dialog.setMessage(getResources().getStringArray(R.array.loading_memes)[random.nextInt(size)] + "...");
+                        dialog.setCancelable(false);
+                        dialog.show();
                         findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.VISIBLE);
                         return true;
                     } else // the passwords do not match
@@ -128,10 +146,12 @@ public class CreateUserActivity extends AppCompatActivity {
         findViewById(R.id.usernameCreateUser).setEnabled(true);
         findViewById(R.id.passwordConfirmCreateUser).setEnabled(true);
         findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.INVISIBLE);
+        dialog.dismiss();
     }
 
     public void returnToLogin() {
         findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.INVISIBLE);
+        dialog.dismiss();
         finish();
     }
 
@@ -148,19 +168,21 @@ public class CreateUserActivity extends AppCompatActivity {
         if (et.length() < 3)
         {
             Toast.makeText(CreateUserActivity.this, "Username must be at least 3 characters", Toast.LENGTH_SHORT).show();
-            return R.integer.short_username_error;//TODO: dont forget about this cj
+            return getResources().getInteger(R.integer.short_username_error);
+            //Completed(TOD0: dont forget about this cj)
+
         }
         if (et.contains("  "))
         {
             Toast.makeText(CreateUserActivity.this, "Username cannot contain consecutive spaces", Toast.LENGTH_SHORT).show();
-            return R.integer.double_space_error;
+            return getResources().getInteger(R.integer.double_space_error);
         }
         Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(et);
         if (m.find())//https://stackoverflow.com/questions/1795402/java-check-a-string-if-there-is-a-special-character-in-it
         {
             Toast.makeText(CreateUserActivity.this, "Username cannot contain special characters", Toast.LENGTH_SHORT).show();
-            return R.integer.special_character_error;
+            return getResources().getInteger(R.integer.special_character_error);
         }
         return 0;
     }

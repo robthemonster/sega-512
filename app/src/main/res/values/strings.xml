@@ -5,4 +5,14 @@
     <string name="password">Password</string>
     <string name="create_user">Create User</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
+    <string-array
+        name="loading_memes">
+        <item>Constructing Additional Pylons</item>
+        <item>Generating Super Secret Stuff</item>
+        <item>Shoeing the Horses</item>
+        <item>Arming the Carrier Pigeons</item>
+        <item>Testing Your Patience</item>
+        <item>Rolling out the Red Carpet</item>
+        <item>Sending out Smoke Signals</item>
+    </string-array>
 </resources>
