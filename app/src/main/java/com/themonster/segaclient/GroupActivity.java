@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 
 import SEGAMessages.GetUsersForGroupRequest;
 import SEGAMessages.GetUsersForGroupResponse;
+import SEGAMessages.RequestAuthorizationFromGroupRequest;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -49,5 +51,14 @@ public class GroupActivity extends AppCompatActivity {
 
             }
         }, intentFilter);
+    }
+
+    public void RequestAccess(View view) {
+        RequestAuthorizationFromGroupRequest request = new RequestAuthorizationFromGroupRequest();
+        request.setGroupName(getIntent().getStringExtra("group"));
+        request.setUsername(getIntent().getStringExtra("username"));
+        request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
+        SendRequestToServerTask task = new SendRequestToServerTask(request);
+        task.execute();
     }
 }

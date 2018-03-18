@@ -9,9 +9,9 @@
         android:id="@+id/CreateUserHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="@string/create_user"
         android:textColor="@android:color/white"
-        android:layout_gravity="center_horizontal"
         android:textSize="24sp" />
 
     <android.support.design.widget.TextInputLayout
@@ -23,15 +23,15 @@
             android:id="@+id/usernameCreateUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@android:color/white"
+            android:backgroundTint="@android:color/white"
             android:hint="@string/username"
             android:imeOptions="actionNext"
-            android:backgroundTint="@android:color/white"
             android:inputType="text"
             android:maxLength="@integer/max_field_length"
             android:maxLines="1"
             android:nextFocusForward="@id/passwordCreateUser"
-            android:textColor="@android:color/white">
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white">
 
             <requestFocus />
         </android.support.design.widget.TextInputEditText>
@@ -47,7 +47,6 @@
             android:id="@+id/passwordCreateUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@android:color/white"
             android:backgroundTint="@android:color/white"
             android:hint="@string/password"
             android:imeOptions="actionNext"
@@ -55,7 +54,8 @@
             android:maxLength="@integer/max_field_length"
             android:maxLines="1"
             android:nextFocusForward="@id/passwordConfirmCreateUser"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -68,17 +68,16 @@
             android:id="@+id/passwordConfirmCreateUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Confirm Password"
             android:backgroundTint="@android:color/white"
+            android:hint="Confirm Password"
             android:imeOptions="actionDone"
-            android:textColorHint="@android:color/white"
             android:inputType="textPassword"
             android:maxLength="@integer/max_field_length"
             android:maxLines="1"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white" />
 
     </android.support.design.widget.TextInputLayout>
-
 
     <ProgressBar
         android:id="@+id/spinnyDoodleCreateUser"

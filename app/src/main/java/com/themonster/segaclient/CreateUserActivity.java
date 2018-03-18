@@ -17,7 +17,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +41,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        dialog  = new ProgressDialog(CreateUserActivity.this);
+        dialog = new ProgressDialog(CreateUserActivity.this);
         getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.loginsplash));
         createUserFailedToast = Toast.makeText(getApplicationContext(), "Username taken!", Toast.LENGTH_SHORT);
         super.onCreate(savedInstanceState);
@@ -57,8 +56,6 @@ public class CreateUserActivity extends AppCompatActivity {
                 startActivity(new Intent(CreateUserActivity.this, SplashScreenActivity.class));
             }
         });
-
-
 
         TextInputEditText et = findViewById(R.id.passwordConfirmCreateUser);
         et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -83,11 +80,6 @@ public class CreateUserActivity extends AppCompatActivity {
                         usernameEditText.setEnabled(true);
                         passwordEditText.setEnabled(true);
                     } else if (passwordConfirmEditText.getText().toString().equals(passwordEditText.getText().toString())) {
-
-
-
-
-
 
                         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         if (inputMethodManager != null) {
@@ -158,22 +150,20 @@ public class CreateUserActivity extends AppCompatActivity {
     public boolean validatePassword() {
         return findViewById(R.id.passwordConfirmCreateUser).toString().length() > 5;
     }
-    public int validateUserName()
-    {
 
-        String et = ((EditText)findViewById(R.id.usernameCreateUser)).getText().toString();
+    public int validateUserName() {
+
+        String et = ((EditText) findViewById(R.id.usernameCreateUser)).getText().toString();
 
         Log.d("ValidateUser", "String Length =" + et.length());
 
-        if (et.length() < 3)
-        {
+        if (et.length() < 3) {
             Toast.makeText(CreateUserActivity.this, "Username must be at least 3 characters", Toast.LENGTH_SHORT).show();
             return getResources().getInteger(R.integer.short_username_error);
             //Completed(TOD0: dont forget about this cj)
 
         }
-        if (et.contains("  "))
-        {
+        if (et.contains("  ")) {
             Toast.makeText(CreateUserActivity.this, "Username cannot contain consecutive spaces", Toast.LENGTH_SHORT).show();
             return getResources().getInteger(R.integer.double_space_error);
         }

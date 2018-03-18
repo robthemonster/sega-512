@@ -42,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
         TextInputEditText editText = findViewById(R.id.passwordLogin);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

@@ -28,16 +28,13 @@ import SEGAMessages.CreateGroupResponse;
  * Created by CJ Hernaez on 3/9/2018.
  */
 
-public class CreateGroupActivity extends AppCompatActivity{
-
+public class CreateGroupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         final String username = getIntent().getStringExtra("username");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.creategroup);
-
-
 
         final TextInputEditText et = findViewById(R.id.create_group_groupname);
         et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -77,11 +74,11 @@ public class CreateGroupActivity extends AppCompatActivity{
                 CreateGroupResponse response = (CreateGroupResponse) intent.getSerializableExtra("response");
                 if (response != null) {
                     if (response.isSucceeded()) {
-                        Toast.makeText(CreateGroupActivity.this, "Group"+ et.getText().toString()+ "created.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateGroupActivity.this, "Group" + et.getText().toString() + "created.", Toast.LENGTH_SHORT).show();
                         findViewById(R.id.create_group_groupname).setEnabled(true);
                     } else {
                         //TODO: Account for if create user was unsuccessful
-                       // createUserFailedToast.show();
+                        // createUserFailedToast.show();
                         Toast.makeText(CreateGroupActivity.this, "Group already Exists.", Toast.LENGTH_SHORT).show();
                         findViewById(R.id.create_group_groupname).setEnabled(true);
                         //resetFields();
@@ -92,20 +89,17 @@ public class CreateGroupActivity extends AppCompatActivity{
         }, intentFilter);
     }
 
-    public int validateGroup()
-    {
+    public int validateGroup() {
 
         String et = ((TextInputEditText) findViewById(R.id.create_group_groupname)).getText().toString();
 
         Log.d("ValidateGroup", "String Length =" + et.length());
 
-        if (et.length() < 3)
-        {
+        if (et.length() < 3) {
             Toast.makeText(CreateGroupActivity.this, "Group Name must be at least 3 characters", Toast.LENGTH_SHORT).show();
             return getResources().getInteger(R.integer.short_username_error);
         }
-        if (et.contains("  "))
-        {
+        if (et.contains("  ")) {
             Toast.makeText(CreateGroupActivity.this, "Group Name cannot contain consecutive spaces", Toast.LENGTH_SHORT).show();
             return getResources().getInteger(R.integer.double_space_error);
         }
