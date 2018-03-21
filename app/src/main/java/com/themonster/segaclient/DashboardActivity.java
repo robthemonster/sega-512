@@ -92,5 +92,13 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        FloatingActionButton refresh = findViewById(R.id.refreshGroupsDashboardFab);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SendRequestToServerTask task = new SendRequestToServerTask(request);
+                task.execute();
+            }
+        });
     }
 }
