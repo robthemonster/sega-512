@@ -74,12 +74,12 @@ public class CreateGroupActivity extends AppCompatActivity {
                 CreateGroupResponse response = (CreateGroupResponse) intent.getSerializableExtra("response");
                 if (response != null) {
                     if (response.isSucceeded()) {
-                        Toast.makeText(CreateGroupActivity.this, "Group" + et.getText().toString() + "created.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateGroupActivity.this, "Group " + et.getText().toString() + " created.", Toast.LENGTH_SHORT).show();
                         findViewById(R.id.create_group_groupname).setEnabled(true);
                     } else {
                         //TODO: Account for if create user was unsuccessful
                         // createUserFailedToast.show();
-                        Toast.makeText(CreateGroupActivity.this, "Group already Exists.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateGroupActivity.this, response.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         findViewById(R.id.create_group_groupname).setEnabled(true);
                         //resetFields();
                     }

@@ -41,7 +41,7 @@ public class GrantAuthorizationActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Acknowledged", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Response was lost", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }, intentFilter);

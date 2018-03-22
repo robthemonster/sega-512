@@ -11,12 +11,14 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import SEGAMessages.GetUsersForGroupRequest;
 import SEGAMessages.GetUsersForGroupResponse;
 import SEGAMessages.RequestAuthorizationFromGroupRequest;
+import SEGAMessages.RequestAuthorizationFromGroupResponse;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -54,11 +56,24 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     public void RequestAccess(View view) {
-        RequestAuthorizationFromGroupRequest request = new RequestAuthorizationFromGroupRequest();
+        final RequestAuthorizationFromGroupRequest request = new RequestAuthorizationFromGroupRequest();
         request.setGroupName(getIntent().getStringExtra("group"));
         request.setUsername(getIntent().getStringExtra("username"));
         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
         SendRequestToServerTask task = new SendRequestToServerTask(request);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(RequestAuthorizationFromGroupResponse.TYPE);
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                RequestAuthorizationFromGroupResponse response = (RequestAuthorizationFromGroupResponse) intent.getSerializableExtra("response");
+                if (response.isSucceeded()) {
+                    Toast.makeText(getApplicationContext(), request.getGroupName() + " authorized your request!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, intentFilter);
         task.execute();
     }
 }
