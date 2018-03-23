@@ -74,6 +74,7 @@ public class DashboardActivity extends AppCompatActivity {
                     convertView = LayoutInflater.from(getContext()).inflate(R.layout.group_list_item, parent, false);
                 }
                 TextView groupNameTextView = convertView.findViewById(R.id.groupNameListItem);
+
                 groupNameTextView.setText(item);
                 return convertView;
             }

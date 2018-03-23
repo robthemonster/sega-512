@@ -48,7 +48,7 @@
             android:id="@+id/spinnyDoodleLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/phantom_spinner"
+            android:indeterminateDrawable="@drawable/phantom_spinner"
             android:layout_gravity="center_horizontal"
             android:visibility="invisible" />
         <android.support.design.widget.FloatingActionButton
