@@ -1,8 +1,10 @@
 package com.themonster.segaclient;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
@@ -47,14 +49,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 intent.putExtra("username", remoteMessage.getData().get("username"));
                 PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
+                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                if (Build.VERSION.SDK_INT >= 26) {
+                    NotificationChannel channel = new NotificationChannel("SEGA", "SEGA", NotificationManager.IMPORTANCE_DEFAULT);
+                    manager.createNotificationChannel(channel);
+                }
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                         .setContentTitle(remoteMessage.getNotification().getTitle())
                         .setContentText(remoteMessage.getNotification().getBody())
                         .setSmallIcon(R.drawable.segalogo)
                         .setContentIntent(pendingIntent)
+                        .setChannelId("SEGA")
                         .setAutoCancel(true);
-
-                NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 manager.notify(0, builder.build());
             }
         }
