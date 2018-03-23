@@ -1,5 +1,6 @@
 package com.themonster.segaclient;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 import SEGAMessages.UserLoginRequest;
 import SEGAMessages.UserLoginResponse;
 
@@ -27,9 +30,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private static Toast loginFailedToast;
     FloatingActionButton fab;
-
+    ProgressDialog dialog;
+    Random random = new Random();
+    int size;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        dialog = new ProgressDialog(LoginActivity.this);
+        size  = getResources().getStringArray(R.array.loading_memes).length;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         fab = findViewById(R.id.fab);
@@ -61,7 +68,13 @@ public class LoginActivity extends AppCompatActivity {
                     request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
                     SendRequestToServerTask task = new SendRequestToServerTask(request);
                     task.execute();
-                    findViewById(R.id.spinnyDoodleLogin).setVisibility(View.VISIBLE);
+                    dialog.setIndeterminate(true);
+                    dialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.phantom_spinner));
+                    dialog.setTitle("Please Wait");
+                    dialog.setMessage(getResources().getStringArray(R.array.loading_memes)[random.nextInt(size)] + "...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+                   // findViewById(R.id.spinnyDoodleLogin).setVisibility(View.VISIBLE);
                     return true;
                 }
                 return false;
@@ -88,13 +101,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private void resetFields() {
         ((EditText) findViewById(R.id.passwordLogin)).getText().clear();
+        dialog.dismiss();
         findViewById(R.id.usernameLogin).setEnabled(true);
         findViewById(R.id.passwordLogin).setEnabled(true);
-        findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
+        //findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
     }
 
     private void launchDashBoard(String username) {
         findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
+        dialog.dismiss();
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.putExtra("username", username);
         startActivity(intent);
