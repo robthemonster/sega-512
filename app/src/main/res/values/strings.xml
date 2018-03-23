@@ -9,6 +9,7 @@
     <string name="grant">GRANT</string>
     <string name="deny">DENY</string>
     <string name="request_access">Request Access</string>
+    <string name="add_user_to_group">Add User To Group</string>
     <string-array name="loading_memes">
         <item>Constructing Additional Pylons</item>
         <item>Generating Super Secret Stuff</item>
@@ -17,5 +18,6 @@
         <item>Testing Your Patience</item>
         <item>Rolling out the Red Carpet</item>
         <item>Sending out Smoke Signals</item>
+        <item>Reticulating Splines</item>
     </string-array>
 </resources>

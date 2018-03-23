@@ -38,7 +38,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        final String username = getIntent().getStringExtra("username");
+        final String username = getIntent().getStringExtra(Constants.USERNAME_EXTRA);
         if (username != null) {
             ((TextView) findViewById(R.id.usernameDashboard)).setText(username);
         }
@@ -83,8 +83,8 @@ public class DashboardActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String groupSelected = adapterView.getItemAtPosition(i).toString();
                 Intent intent = new Intent(DashboardActivity.this, GroupActivity.class);
-                intent.putExtra("username", username);
-                intent.putExtra("group", groupSelected);
+                intent.putExtra(Constants.USERNAME_EXTRA, username);
+                intent.putExtra(Constants.GROUPNAME_EXTRA, groupSelected);
                 startActivity(intent);
             }
         });
@@ -95,7 +95,7 @@ public class DashboardActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d("CreateGroup ", "onClick Pressed!");
                 Intent intent = new Intent(DashboardActivity.this, CreateGroupActivity.class);
-                intent.putExtra("username", getIntent().getStringExtra("username"));
+                intent.putExtra(Constants.USERNAME_EXTRA, getIntent().getStringExtra(Constants.USERNAME_EXTRA));
                 startActivity(intent);
             }
         });

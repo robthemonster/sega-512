@@ -22,7 +22,7 @@ public class SendRequestToServerTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         try {
-            Socket socket = new Socket(ServerInfo.SEGA_SERVER_DNS, 6969);
+            Socket socket = new Socket(Constants.SEGA_SERVER_DNS, 6969);
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(request);
             outputStream.flush();

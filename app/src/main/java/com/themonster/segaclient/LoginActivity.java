@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
         dialog.dismiss();
         Intent intent = new Intent(this, DashboardActivity.class);
-        intent.putExtra("username", username);
+        intent.putExtra(Constants.USERNAME_EXTRA, username);
         startActivity(intent);
     }
 

@@ -26,8 +26,8 @@ public class GrantAuthorizationActivity extends AppCompatActivity {
 
     public void GrantAccess(View view) {
         GrantAuthorizationForGroupRequest request = new GrantAuthorizationForGroupRequest();
-        request.setGroupName(getIntent().getStringExtra("groupname"));
-        request.setUsername(getIntent().getStringExtra("username"));
+        request.setGroupName(getIntent().getStringExtra(Constants.GROUPNAME_EXTRA));
+        request.setUsername(getIntent().getStringExtra(Constants.USERNAME_EXTRA));
         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         task.execute();

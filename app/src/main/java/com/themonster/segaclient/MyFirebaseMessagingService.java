@@ -45,8 +45,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             super.onMessageReceived(remoteMessage);
             if (remoteMessage.getData() != null && remoteMessage.getData().containsKey("groupname") && remoteMessage.getData().containsKey("username")) {
                 Intent intent = new Intent(remoteMessage.getNotification().getClickAction());
-                intent.putExtra("groupname", remoteMessage.getData().get("groupname"));
-                intent.putExtra("username", remoteMessage.getData().get("username"));
+                intent.putExtra(Constants.GROUPNAME_EXTRA, remoteMessage.getData().get("groupname"));
+                intent.putExtra(Constants.USERNAME_EXTRA, remoteMessage.getData().get("username"));
                 PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
                 NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
