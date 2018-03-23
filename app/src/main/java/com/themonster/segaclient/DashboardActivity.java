@@ -2,6 +2,7 @@ package com.themonster.segaclient;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,10 +28,14 @@ import SEGAMessages.GetGroupsForUserResponse;
 
 public class DashboardActivity extends AppCompatActivity {
 
+    private AlertDialog mDialog;
+
     private ArrayList<String> groups = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         final String username = getIntent().getStringExtra("username");
@@ -58,6 +64,7 @@ public class DashboardActivity extends AppCompatActivity {
         }, intentFilter);
 
         ListView listView = findViewById(R.id.groupListDashboard);
+
         listView.setAdapter(new ArrayAdapter<String>(this, R.layout.group_list_item, groups) {
             @NonNull
             @Override
@@ -101,4 +108,46 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+    public void onBackPressed() {
+
+
+        if (mDialog == null) // https://stackoverflow.com/questions/14910602/how-to-use-alertdialog
+        {
+            mDialog =  new AlertDialog.Builder(this)
+                    .setTitle("Confirm Logout")
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("YES",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.i("MyTag" , "Click YES");
+                                    //TODO rob here is where to clear out stuffs
+                                    Intent i = new Intent(DashboardActivity.this, LoginActivity.class);
+                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(i);
+
+                                }
+                            })
+
+                    .setNegativeButton("NO",
+                            new android.content.DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.i("MyTag", "Click NO");
+
+                                }
+                            }).create();
+        }
+        // TODO Auto-generated method stub
+       // moveTaskToBack(true);
+       // super.onBackPressed();
+        mDialog.show();
+    }
+
+
 }

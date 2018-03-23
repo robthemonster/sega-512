@@ -13,7 +13,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.splash1));
+        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.splash4)); //TODO change back to 1. Currently testing
         ProgressBar pb = findViewById(R.id.splash_screen_phantom_spinner);
         pb.setVisibility(View.INVISIBLE);
         /*https://stackoverflow.com/questions/2819778/custom-drawable-for-progressbar-progressdialog*/
