@@ -42,9 +42,11 @@
         <activity android:name=".GrantAuthorizationActivity">
             <intent-filter>
                 <action android:name="SEGAClient.GRANTAUTH" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".DirectoryBrowserActivity"></activity>
     </application>
 
 </manifest>

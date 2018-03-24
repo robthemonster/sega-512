@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.isSucceeded()) { //TODO: account for if login failed
                         launchDashBoard(response.getUsername());
                     } else {
-                        loginFailedToast.show();
+                        Toast.makeText(getApplicationContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
                         resetFields();
                     }
                 }

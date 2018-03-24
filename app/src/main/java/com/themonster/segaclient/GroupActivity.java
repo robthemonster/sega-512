@@ -74,6 +74,9 @@ public class GroupActivity extends AppCompatActivity {
                 RequestAuthorizationFromGroupResponse response = (RequestAuthorizationFromGroupResponse) intent.getSerializableExtra("response");
                 if (response.isSucceeded()) {
                     Toast.makeText(getApplicationContext(), request.getGroupName() + " authorized your request!", Toast.LENGTH_SHORT).show();
+                    Intent launchBrowser = new Intent(getIntent());
+                    launchBrowser.setClass(getApplicationContext(), DirectoryBrowserActivity.class);
+                    startActivity(launchBrowser);
                 } else {
                     Toast.makeText(getApplicationContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
