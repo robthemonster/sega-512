@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -39,10 +38,8 @@ public class DashboardActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        final String username = getIntent().getStringExtra(Constants.USERNAME_EXTRA);
-        if (username != null) {
-            ((TextView) findViewById(R.id.usernameDashboard)).setText(username);
-        }
+        final String username = getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "");
+        ((TextView) findViewById(R.id.usernameDashboard)).setText(username);
         final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
         request.setUsername(username);
         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
@@ -160,6 +157,4 @@ public class DashboardActivity extends AppCompatActivity {
        // super.onBackPressed();
         mDialog.show();
     }
-
-
 }

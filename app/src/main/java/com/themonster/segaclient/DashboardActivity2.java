@@ -4,15 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.util.Log;
+import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
@@ -33,7 +31,7 @@ public class DashboardActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard2);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.AD_recycler_view);
+        mRecyclerView = findViewById(R.id.AD_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -46,9 +44,24 @@ public class DashboardActivity2 extends AppCompatActivity {
         // specify an adapter (see also next example)
         mAdapter = new GroupsAdapter(groups);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                Log.d("intercepted", "thouch");
+                return false;
+            }
 
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
 
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
         final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
         request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
@@ -62,8 +75,7 @@ public class DashboardActivity2 extends AppCompatActivity {
                 GetGroupsForUserResponse response = (GetGroupsForUserResponse) intent.getSerializableExtra("response");
                 groups.clear();
                 groups.addAll(response.getGroups());
-                    mAdapter.notifyDataSetChanged();
-
+                mAdapter.notifyDataSetChanged();
             }
         }, intentFilter);
 

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -75,6 +76,8 @@ public class GroupActivity extends AppCompatActivity {
                 if (response.isSucceeded()) {
                     Toast.makeText(getApplicationContext(), request.getGroupName() + " authorized your request!", Toast.LENGTH_SHORT).show();
                     Intent launchBrowser = new Intent(getIntent());
+                    Log.d("test", launchBrowser.getExtras().getString(Constants.GROUPNAME_EXTRA) == getIntent().getExtras().getString(Constants.GROUPNAME_EXTRA) ? "yes" : "no");
+
                     launchBrowser.setClass(getApplicationContext(), DirectoryBrowserActivity.class);
                     startActivity(launchBrowser);
                 } else {

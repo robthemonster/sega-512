@@ -9,11 +9,9 @@
         <TextView
             android:id="@+id/groupNameListItem"
             android:layout_width="match_parent"
-            android:textSize="30sp"
             android:layout_height="50dp"
+            android:textSize="30sp"
             />
-
-
 
     </RelativeLayout>
 </android.support.v7.view.menu.ListMenuItemView>
