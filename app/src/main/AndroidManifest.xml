@@ -46,7 +46,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".DirectoryBrowserActivity"></activity>
+        <activity android:name=".DirectoryBrowserActivity" />
+        <activity android:name=".DashboardActivity2"></activity>
     </application>
 
 </manifest>
