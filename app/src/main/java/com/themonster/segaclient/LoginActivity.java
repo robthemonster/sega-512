@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
@@ -89,6 +90,8 @@ public class LoginActivity extends AppCompatActivity {
                 UserLoginResponse response = (UserLoginResponse) intent.getSerializableExtra("response");
                 if (response != null) {
                     if (response.isSucceeded()) { //TODO: account for if login failed
+                        SharedPreferences sharedPreferences = getSharedPreferences("userCredentials", Context.MODE_PRIVATE);
+                        sharedPreferences.edit().putString(Constants.USERNAME_EXTRA, response.getUsername()).apply();
                         launchDashBoard(response.getUsername());
                     } else {
                         Toast.makeText(getApplicationContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();

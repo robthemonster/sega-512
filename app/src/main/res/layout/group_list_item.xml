@@ -9,7 +9,7 @@
         <TextView
             android:id="@+id/groupNameListItem"
             android:layout_width="match_parent"
-            android:textSize="30dp"
+            android:textSize="30sp"
             android:layout_height="50dp"
             />
 

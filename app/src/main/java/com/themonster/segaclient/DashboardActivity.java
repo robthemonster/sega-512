@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -110,7 +111,17 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((TextView) findViewById(R.id.usernameDashboard)).setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        Log.d("DashBoardActivity", "onresumecalled "+ getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
+        request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString("username", ""));
+        request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
+        SendRequestToServerTask task = new SendRequestToServerTask(request);
+        task.execute();
+    }
 
     public void onBackPressed() {
 
