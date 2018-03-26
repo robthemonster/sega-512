@@ -48,7 +48,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".DirectoryBrowserActivity" />
-        <activity android:name=".DashboardActivity2"></activity>
+        <activity android:name=".DashboardActivity2"/>
+
     </application>
 
 </manifest>

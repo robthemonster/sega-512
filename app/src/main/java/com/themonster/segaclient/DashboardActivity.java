@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import SEGAMessages.GetGroupsForUserRequest;
 import SEGAMessages.GetGroupsForUserResponse;
-
+@Deprecated
 public class DashboardActivity extends AppCompatActivity {
 
     private AlertDialog mDialog;

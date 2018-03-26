@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import SEGAMessages.GetGroupsForUserResponse;
 
 public class DashboardActivity2 extends AppCompatActivity {
 
+    TextView nameTV;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private AlertDialog mDialog;
     private ArrayList<String> groups = new ArrayList<>();
@@ -40,10 +42,11 @@ public class DashboardActivity2 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard2);
-
+        //nameTV = (TextView)findViewById(R.id.cv_username);
+        setTitle(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "") + "'s groups");
+        //nameTV.setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "") + "'s groups");
         mRecyclerView = findViewById(R.id.AD_recycler_view);
         mRecyclerView.setHasFixedSize(false);
         mLayoutManager = new LinearLayoutManager(this);
@@ -67,7 +70,6 @@ public class DashboardActivity2 extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // cancel the Visual indication of a refresh
 
                 refresh();
             }

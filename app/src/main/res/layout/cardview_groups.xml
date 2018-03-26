@@ -7,7 +7,7 @@
     card_view:cardUseCompatPadding="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:layout_marginBottom="5dp"
-    android:layout_height="wrap_content"
+    android:layout_height="80dp"
     android:background="?android:selectableItemBackground"
     android:clickable="true"
     app:cardCornerRadius="4dp">
@@ -15,14 +15,25 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="4dp">
+            >
+
+            <ImageView
+                android:id="@+id/cv_img"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginRight="20dp"/>
 
             <TextView
                 android:id="@+id/cv_group_name"
                 android:text="Filler"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30sp"
+                android:textColor="@android:color/white"
+                android:layout_centerInParent="true"
+                android:layout_width="240dp"
+                android:maxLines="1"
+                android:textSize="25dp"
+                android:textAlignment="center"
+                android:layout_toRightOf="@id/cv_img"
             android:textStyle="bold"/>
 
         </RelativeLayout>
