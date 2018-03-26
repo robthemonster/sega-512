@@ -1,17 +1,21 @@
 package com.themonster.segaclient;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,17 +27,14 @@ import android.widget.Toast;
 
 import com.codekidlabs.storagechooser.StorageChooser;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
+import SEGAMessages.DeleteFileFromGroupRequest;
+import SEGAMessages.DeleteFileFromGroupResponse;
 import SEGAMessages.FileAttributes;
 import SEGAMessages.GetFilesForGroupRequest;
 import SEGAMessages.GetFilesForGroupResponse;
-import SEGAMessages.UploadFileToGroupRequest;
-import SEGAMessages.UploadFileToGroupResponse;
 
 
 /**
@@ -44,7 +45,7 @@ import SEGAMessages.UploadFileToGroupResponse;
  * Use the {@link DirectoryBrowserFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DirectoryBrowserFragment extends Fragment {
+public class DirectoryBrowserFragment extends Fragment implements SendFileToServerTask.SendFileToServerCallBack, GetFileFromServerTask.GetFileFromServerCallBack {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
@@ -54,6 +55,7 @@ public class DirectoryBrowserFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String groupname;
     private String username;
+    private int selectedIndex = -1;
 
     private ArrayList<FileAttributes> fileList = new ArrayList<>();
 
@@ -87,12 +89,7 @@ public class DirectoryBrowserFragment extends Fragment {
         if (getArguments() != null) {
             groupname = getArguments().getString(ARG_GROUPNAME);
             username = getArguments().getString(ARG_USERNAME);
-            GetFilesForGroupRequest request = new GetFilesForGroupRequest();
-            request.setGroupname(groupname);
-            request.setUsername(username);
-            request.setFirebaseToken(getActivity().getSharedPreferences("firebaseToken", Context.MODE_PRIVATE).getString("token", ""));
-            SendRequestToServerTask task = new SendRequestToServerTask(request);
-            task.execute();
+            refreshFileList();
         }
     }
 
@@ -119,14 +116,57 @@ public class DirectoryBrowserFragment extends Fragment {
             listView.setAdapter(new ArrayAdapter<FileAttributes>(getContext(), R.layout.group_directory_file_list_item, fileList) {
                 @NonNull
                 @Override
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                     View listItem = convertView;
                     if (listItem == null) {
                         listItem = LayoutInflater.from(getContext()).inflate(R.layout.group_directory_file_list_item, parent, false);
                     }
-                    FileAttributes fileAttributes = fileList.get(position);
-                    ((TextView) listItem.findViewById(R.id.fileNameListItem)).setText(fileAttributes.getFileName());
-                    ((TextView) listItem.findViewById(R.id.fileSizeListItem)).setText(fileAttributes.getFileSize() + "");
+                    final FileAttributes fileAttributes = fileList.get(position);
+                    ((TextView) listItem.findViewById(R.id.fileNameListItem)).setText(
+                            String.format("%.32s", fileAttributes.getFileName() + (fileAttributes.getFileName().length() > 32 ? "..." : ""))
+                    );
+                    ((TextView) listItem.findViewById(R.id.fileSizeListItem)).setText(Formatter.formatShortFileSize(getContext(), fileAttributes.getFileSize()));
+                    listItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            DialogInterface.OnClickListener download = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    selectedIndex = position;
+                                    String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                                    requestPermissions(permissions, 201);
+                                }
+                            };
+                            DialogInterface.OnClickListener delete = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    IntentFilter intentFilter = new IntentFilter();
+                                    intentFilter.addAction(DeleteFileFromGroupResponse.TYPE);
+                                    LocalBroadcastManager.getInstance(getContext()).registerReceiver(new BroadcastReceiver() {
+                                        @Override
+                                        public void onReceive(Context context, Intent intent) {
+                                            DeleteFileFromGroupResponse response = (DeleteFileFromGroupResponse) intent.getSerializableExtra("response");
+                                            Toast.makeText(getContext(), response.isSucceeded() ? "File deleted" : response.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                            if (response.isSucceeded()) {
+                                                refreshFileList();
+                                            }
+                                        }
+                                    }, intentFilter);
+                                    DeleteFileFromGroupRequest request = new DeleteFileFromGroupRequest();
+                                    request.setFilename(fileAttributes.getFileName());
+                                    request.setGroupname(groupname);
+                                    request.setUsername(username);
+                                    request.setFirebaseToken(Constants.getFirebaseToken(getContext()));
+                                    SendRequestToServerTask task = new SendRequestToServerTask(request);
+                                    task.execute();
+                                }
+                            };
+                            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Download", download);
+                            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Delete", delete);
+                            alertDialog.show();
+                        }
+                    });
                     return listItem;
                 }
             });
@@ -188,46 +228,52 @@ public class DirectoryBrowserFragment extends Fragment {
                         .build();
                 storageChooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
                     @Override
-                    public void onSelect(String s) {
-                        Log.d("File selected", s);
-                        final UploadFileToGroupRequest request = new UploadFileToGroupRequest();
-                        File file = new File(s);
+                    public void onSelect(String fileName) {
+                        Log.d("File selected", fileName);
+                        File file = new File(fileName);
                         if (file.exists()) {
-                            try {
-                                IntentFilter intentFilter = new IntentFilter();
-                                intentFilter.addAction(UploadFileToGroupResponse.TYPE);
-                                LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(new BroadcastReceiver() {
-                                    @Override
-                                    public void onReceive(Context context, Intent intent) {
-                                        UploadFileToGroupResponse response = (UploadFileToGroupResponse) intent.getSerializableExtra("response");
-                                        Toast.makeText(getActivity(), response.isSucceeded() ? "Upload succeeded" : response.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                                        if (response.isSucceeded()) {
-                                            GetFilesForGroupRequest request = new GetFilesForGroupRequest();
-                                            request.setGroupname(groupname);
-                                            request.setUsername(username);
-                                            request.setFirebaseToken(getActivity().getSharedPreferences("firebaseToken", Context.MODE_PRIVATE).getString("token", ""));
-                                            SendRequestToServerTask task = new SendRequestToServerTask(request);
-                                            task.execute();
-                                        }
-                                    }
-                                }, intentFilter);
-                                request.setFile(FileUtils.readFileToByteArray(file));
-                                request.setFilename(file.getName());
-                                request.setGroupname(groupname);
-                                request.setUsername(username);
-                                request.setFirebaseToken(getActivity().getSharedPreferences("firebaseToken", Context.MODE_PRIVATE).getString("token", ""));
-                                SendRequestToServerTask task = new SendRequestToServerTask(request);
-                                task.execute();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            SendFileToServerTask task = new SendFileToServerTask(DirectoryBrowserFragment.this);
+                            task.execute(groupname, fileName);
                         }
                     }
                 });
                 storageChooser.show();
             }
         }
+        if (permsRequestCode == 201) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                GetFileFromServerTask task = new GetFileFromServerTask(DirectoryBrowserFragment.this);
+                if (selectedIndex != -1) {
+                    FileAttributes fileAttributes = (FileAttributes) ((ListView) getView().findViewById(R.id.fileListViewBrowserFragment)).getItemAtPosition(selectedIndex);
+                    task.execute(groupname, fileAttributes.getFileName());
+                    selectedIndex = -1;
+                }
+            }
+
+        }
     }
+
+
+    @Override
+    public void downloadCompleted(String location) {
+        Toast.makeText(getContext(), "File downloaded to " + location, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void refreshFileList() {
+        GetFilesForGroupRequest request = new GetFilesForGroupRequest();
+        request.setGroupname(groupname);
+        request.setUsername(username);
+        request.setFirebaseToken(Constants.getFirebaseToken(getContext()));
+        SendRequestToServerTask task = new SendRequestToServerTask(request);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    @Override
+    public void announceUploadCompleted() {
+        Toast.makeText(getContext(), "Upload complete!", Toast.LENGTH_SHORT).show();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -242,6 +288,4 @@ public class DirectoryBrowserFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 }

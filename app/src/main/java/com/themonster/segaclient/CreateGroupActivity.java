@@ -32,7 +32,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        final String username = getIntent().getStringExtra(Constants.USERNAME_EXTRA);
+        final String username = Constants.getUsername(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.creategroup);
 
