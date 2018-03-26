@@ -2,66 +2,89 @@ package com.themonster.segaclient;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import SEGAMessages.GetGroupsForUserRequest;
 import SEGAMessages.GetGroupsForUserResponse;
 
 public class DashboardActivity2 extends AppCompatActivity {
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    private AlertDialog mDialog;
     private ArrayList<String> groups = new ArrayList<>();
-
+    Toast toast;
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private GroupsAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard2);
 
         mRecyclerView = findViewById(R.id.AD_recycler_view);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
+        mRecyclerView.setHasFixedSize(false);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new GroupsAdapter(groups);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-
+        mAdapter.setOnItemClickListener(new GroupsAdapter.OnItemClickListener() {
             @Override
-            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                Log.d("intercepted", "thouch");
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
+            public void onItemClick(int position) {
+                Log.d("Position : " + position + " clicked.", "ya");
+                String groupSelected = groups.get(position);
+                Intent intent = new Intent(DashboardActivity2.this, GroupActivity.class);
+                intent.putExtra(Constants.USERNAME_EXTRA, getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+                intent.putExtra(Constants.GROUPNAME_EXTRA, groupSelected);
+                startActivity(intent);
             }
         });
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // cancel the Visual indication of a refresh
+
+                refresh();
+            }
+        });
+
+        FloatingActionButton fab2 = findViewById(R.id.fab2_0);
+        fab2.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
+            // trying to figure out the database and new ROOM environment
+            @Override
+            public void onClick(View view) {
+                Log.d("CreateGroup ", "onClick Pressed!");
+                Intent intent = new Intent(DashboardActivity2.this, CreateGroupActivity.class);
+                intent.putExtra(Constants.USERNAME_EXTRA, getIntent().getStringExtra(Constants.USERNAME_EXTRA));
+                startActivity(intent);
+            }
+        });
+
         final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
         request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
@@ -76,6 +99,7 @@ public class DashboardActivity2 extends AppCompatActivity {
                 groups.clear();
                 groups.addAll(response.getGroups());
                 mAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         }, intentFilter);
 
@@ -84,5 +108,62 @@ public class DashboardActivity2 extends AppCompatActivity {
 
 
 
+    }
+    protected void onResume() {
+        super.onResume();
+       // ((TextView) findViewById(R.id.usernameDashboard)).setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        Log.d("DashBoardActivity2", "onresumecalled "+ getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
+        request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString("username", ""));
+        request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
+        SendRequestToServerTask task = new SendRequestToServerTask(request);
+        task.execute();
+    }
+
+    void refresh()
+    {
+        final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
+        request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString("username", ""));
+        request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
+        SendRequestToServerTask task = new SendRequestToServerTask(request);
+        task.execute();
+    }
+
+    public void onBackPressed() {
+
+
+        if (mDialog == null) // https://stackoverflow.com/questions/14910602/how-to-use-alertdialog
+        {
+            mDialog =  new AlertDialog.Builder(this)
+                    .setTitle("Confirm Logout")
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("YES",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.i("MyTag" , "Click YES");
+                                    //TODO rob here is where to clear out stuffs
+                                    Intent i = new Intent(DashboardActivity2.this, LoginActivity.class);
+                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(i);
+
+                                }
+                            })
+
+                    .setNegativeButton("NO",
+                            new android.content.DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.i("MyTag", "Click NO");
+
+                                }
+                            }).create();
+        }
+        // TODO Auto-generated method stub
+        // moveTaskToBack(true);
+        // super.onBackPressed();
+        mDialog.show();
     }
 }
