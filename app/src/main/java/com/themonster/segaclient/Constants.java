@@ -7,7 +7,7 @@ import android.content.Context;
  */
 
 public class Constants {
-    public static final String SEGA_SERVER_DNS = /*"192.168.1.2";*/ "ec2-18-219-109-42.us-east-2.compute.amazonaws.com";
+    public static final String SEGA_SERVER_DNS = /*"192.168.1.2";*/ "ec2-18-220-223-143.us-east-2.compute.amazonaws.com";
     public static final String USERNAME_EXTRA = "username";
     public static final String GROUPNAME_EXTRA = "groupname";
 
