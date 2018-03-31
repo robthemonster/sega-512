@@ -1,6 +1,9 @@
 .gradle
 /local.properties
 .DS_Store
-/build
+/build/android-profile
 /captures
 .externalNativeBuild
+/.idea
+SEGAClient.iml
+/app/app.iml
