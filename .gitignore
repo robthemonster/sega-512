@@ -1,10 +1,10 @@
 .gradle
 /local.properties
 .DS_Store
-/build/**
+/build
 /captures
 .externalNativeBuild
-/.idea/**
+/.idea
 SEGAClient.iml
 /app/app.iml
-/grade/**
+/gradle
