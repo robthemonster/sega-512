@@ -1,9 +1,10 @@
 .gradle
 /local.properties
 .DS_Store
-/build/android-profile
+/build/**
 /captures
 .externalNativeBuild
-/.idea
+/.idea/**
 SEGAClient.iml
 /app/app.iml
+/grade/**
