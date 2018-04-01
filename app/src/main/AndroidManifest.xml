@@ -29,26 +29,36 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            android:screenOrientation="portrait"
         </activity>
         <activity
             android:name=".CreateUserActivity"
-            android:theme="@style/AppTheme.FullScreen" />
+            android:theme="@style/AppTheme.FullScreen"
+            android:screenOrientation="portrait"/>
         <activity android:name=".DashboardActivity" />
-        <activity android:name=".GroupActivity" />
-        <activity android:name=".CreateGroupActivity" />
+        <activity android:name=".GroupActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".GroupActivity2"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CreateGroupActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SplashScreenActivity"
             android:label="@string/title_activity_splash_screen"
-            android:theme="@style/AppTheme.FullScreen" />
+            android:theme="@style/AppTheme.FullScreen"
+            android:screenOrientation="portrait"/>
         <activity android:name=".GrantAuthorizationActivity">
             <intent-filter>
                 <action android:name="SEGAClient.GRANTAUTH" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            android:screenOrientation="portrait"
         </activity>
-        <activity android:name=".DirectoryBrowserActivity" />
-        <activity android:name=".DashboardActivity2"/>
+        <activity android:name=".DirectoryBrowserActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".DashboardActivity2"
+            android:screenOrientation="portrait"/>
 
     </application>
 

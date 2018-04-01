@@ -59,7 +59,7 @@ public class DashboardActivity2 extends AppCompatActivity {
             public void onItemClick(int position) {
                 Log.d("Position : " + position + " clicked.", "ya");
                 String groupSelected = groups.get(position);
-                Intent intent = new Intent(DashboardActivity2.this, GroupActivity.class);
+                Intent intent = new Intent(DashboardActivity2.this, GroupActivity2.class);
                 intent.putExtra(Constants.USERNAME_EXTRA, getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
                 intent.putExtra(Constants.GROUPNAME_EXTRA, groupSelected);
                 startActivity(intent);
@@ -86,12 +86,13 @@ public class DashboardActivity2 extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        /*
         final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
         request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         task.execute();
+        */
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GetGroupsForUserResponse.TYPE);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
@@ -115,11 +116,7 @@ public class DashboardActivity2 extends AppCompatActivity {
         super.onResume();
        // ((TextView) findViewById(R.id.usernameDashboard)).setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
         Log.d("DashBoardActivity2", "onresumecalled "+ getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
-        final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
-        request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString("username", ""));
-        request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
-        SendRequestToServerTask task = new SendRequestToServerTask(request);
-        task.execute();
+        refresh();
     }
 
     void refresh()
@@ -145,7 +142,7 @@ public class DashboardActivity2 extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Log.i("MyTag" , "Click YES");
-                                    //TODO rob here is where to clear out stuffs
+                                    //TODO rob here is where to clear out stuffs in the DB
                                     Intent i = new Intent(DashboardActivity2.this, LoginActivity.class);
                                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(i);

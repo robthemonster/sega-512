@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/CreateUserHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/create_user"
+        android:textColor="@android:color/white"
+        android:textSize="24sp" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@android:color/white">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/usernameLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/white"
+            android:hint="@string/username"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:maxLength="@integer/max_field_length"
+            android:maxLines="1"
+            android:nextFocusForward="@id/passwordCreateUser"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white">
+
+            <requestFocus />
+        </android.support.design.widget.TextInputEditText>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@android:color/white"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/passwordLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/white"
+            android:hint="@string/password"
+            android:imeOptions="actionNext"
+            android:inputType="textPassword"
+            android:maxLength="@integer/max_field_length"
+            android:maxLines="1"
+            android:nextFocusForward="@id/passwordConfirmCreateUser"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColorHint="@android:color/white">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/passwordConfirmCreateUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/white"
+            android:hint="Confirm Password"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:maxLength="@integer/max_field_length"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <ProgressBar
+        android:id="@+id/spinnyDoodleCreateUser"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="74dp"
+        android:layout_height="74dp"
+        android:layout_gravity="center_horizontal"
+        android:indeterminateDrawable="@drawable/phantom_spinner"
+        android:visibility="invisible" />
+
+
+    <!--
+    // for now, simply check if the group password matches. //Todo
+    -->
+
+</LinearLayout>
+
+    <!--
+    // tutorial from https://www.youtube.com/watch?v=CTBiwKlO5IU
+    -->
