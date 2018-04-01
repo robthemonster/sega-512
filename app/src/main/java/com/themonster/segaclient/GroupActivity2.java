@@ -26,6 +26,8 @@ import java.util.ArrayList;
 
 import SEGAMessages.AddUserToGroupRequest;
 import SEGAMessages.AddUserToGroupResponse;
+import SEGAMessages.DeleteUserFromGroupRequest;
+import SEGAMessages.DeleteUserFromGroupResponse;
 import SEGAMessages.GetGroupsForUserRequest;
 import SEGAMessages.GetUsersForGroupRequest;
 import SEGAMessages.GetUsersForGroupResponse;
@@ -34,7 +36,7 @@ import SEGAMessages.RequestAuthorizationFromGroupResponse;
 
 public class GroupActivity2 extends AppCompatActivity {
 
-
+    AlertDialog.Builder builder;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private GroupMembersAdapter mAdapter;
@@ -43,10 +45,48 @@ public class GroupActivity2 extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        builder = new AlertDialog.Builder(GroupActivity2.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_2);
-        String groupName = getIntent().getStringExtra(Constants.GROUPNAME_EXTRA);
-        String username = Constants.getUsername(getApplicationContext());
+        final String groupName = getIntent().getStringExtra(Constants.GROUPNAME_EXTRA);
+        final String username = Constants.getUsername(getApplicationContext());
+
+        IntentFilter intentFilter2 = new IntentFilter();
+        intentFilter2.addAction(DeleteUserFromGroupResponse.TYPE);
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                DeleteUserFromGroupResponse response = (DeleteUserFromGroupResponse) intent.getSerializableExtra("response");
+                if (!response.isSucceeded()){
+                    Toast.makeText(getApplicationContext(),response.getErrorMessage(),Toast.LENGTH_SHORT ).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), response.getDeletedUser() + " was removed from " + response.getGroupname(), Toast.LENGTH_SHORT).show();
+                    refresh();
+                }
+
+            }
+        }, intentFilter2);
+
+
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GetUsersForGroupResponse.TYPE);
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                GetUsersForGroupResponse response = (GetUsersForGroupResponse) intent.getSerializableExtra("response");
+                if (response.getUsers() == null){
+                    Log.d("users", "users was null");
+                }
+                usersInGroup.clear();
+                usersInGroup.addAll(response.getUsers());
+                mAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
+
+            }
+        }, intentFilter);
+
 
         setTitle(getIntent().getStringExtra(Constants.GROUPNAME_EXTRA) + "'s members");
         //nameTV.setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "") + "'s groups");
@@ -57,17 +97,39 @@ public class GroupActivity2 extends AppCompatActivity {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new GroupMembersAdapter(usersInGroup);
         mRecyclerView.setAdapter(mAdapter);
-       /* mAdapter.setOnItemClickListener(new GroupsAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new GroupsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+
+                final int fpos = position;
+                builder.setMessage("Are you sure you want to attempt to remove " + usersInGroup.get(position) + " from " + groupName + "?")
+                        .setTitle("Confirm Deletion");
+
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        DeleteUserFromGroupRequest req = new DeleteUserFromGroupRequest();
+                        req.setGroupname(groupName);
+                        req.setRequestor(username);
+                        req.setUserToDelete(usersInGroup.get(fpos));
+                        req.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
+                        SendRequestToServerTask task = new SendRequestToServerTask(req);
+                        task.execute();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 Log.d("Position : " + position + " clicked.", "ya");
                 String groupSelected = usersInGroup.get(position);
-                Intent intent = new Intent(GroupActivity2.this, GroupActivity.class);
-                intent.putExtra(Constants.USERNAME_EXTRA, getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
-                intent.putExtra(Constants.GROUPNAME_EXTRA, groupSelected);
-                startActivity(intent);
+                //Toast.makeText(GroupActivity2.this, usersInGroup.get(position), Toast.LENGTH_SHORT).show();
+
             }
-        });*/
+        });
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.group_members_swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -90,22 +152,7 @@ public class GroupActivity2 extends AppCompatActivity {
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         task.execute();
         */
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GetUsersForGroupResponse.TYPE);
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                GetUsersForGroupResponse response = (GetUsersForGroupResponse) intent.getSerializableExtra("response");
-                if (response.getUsers() == null){
-                    Log.d("users", "users was null");
-                }
-                usersInGroup.clear();
-                usersInGroup.addAll(response.getUsers());
-                mAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
 
-            }
-        }, intentFilter);
 
 
 

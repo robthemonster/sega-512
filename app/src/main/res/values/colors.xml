@@ -2,6 +2,6 @@
 <resources>
     <color name="colorPrimary">#17569b</color>
     <color name="colorPrimaryDark">#FFA500</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#17369b</color>
     <color name="yellowish">#FFA500</color>
 </resources>

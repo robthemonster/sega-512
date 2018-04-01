@@ -11,6 +11,8 @@
     <string name="request_access">Request Access</string>
     <string name="add_user_to_group">Add User To Group</string>
     <string name="upload_file">Upload File</string>
+    <string name="yes">yes</string>
+    <string name="cancel">cancel</string>
     <string-array name="loading_memes">
         <item>Constructing Additional Pylons</item>
         <item>Generating Super Secret Stuff</item>

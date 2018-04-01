@@ -41,8 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
-            // trying to figure out the database and new ROOM environment
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick Pressed!");
