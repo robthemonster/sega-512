@@ -10,7 +10,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * Created by The Monster on 3/25/2018.
@@ -41,17 +40,7 @@ public class SendFileToServerTask extends AsyncTask<String, Void, Void> {
                 client.setFileType(FTP.BINARY_FILE_TYPE);
                 BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                 client.enterLocalPassiveMode();
-                OutputStream outputStream = client.storeFileStream(file.getName());
-                byte[] buffer = new byte[1024];
-                long byteNum = 0;
-                while (inputStream.read(buffer) != -1) {
-                    outputStream.write(buffer);
-                    byteNum++;
-                    if (byteNum % (5 * file.length() / 1024 / 100) == 0) { //refresh every 5%
-                        publishProgress();
-                    }
-                }
-                outputStream.close();
+                client.storeFile(file.getName(), inputStream);
                 inputStream.close();
             }
             client.disconnect();

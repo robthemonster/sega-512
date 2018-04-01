@@ -1,13 +1,11 @@
 package com.themonster.segaclient;
 
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,9 +26,10 @@ public class GetFileFromServerTask extends AsyncTask<String, Float, Void> {
     protected Void doInBackground(String... strings) {
         String groupname = strings[0];
         String filename = strings[1];
+        String filesDir = strings[2];
         FTPClient client = new FTPClient();
         try {
-            File localFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + "groups" + File.separator + groupname + File.separator + filename);
+            File localFile = new File(filesDir + File.separator + "groups" + File.separator + groupname + File.separator + filename);
             if (!localFile.getParentFile().getParentFile().exists()) {
                 localFile.getParentFile().getParentFile().mkdir();
             }
@@ -42,17 +41,16 @@ public class GetFileFromServerTask extends AsyncTask<String, Float, Void> {
             }
             if (localFile.createNewFile()) {
                 client.connect(Constants.SEGA_SERVER_DNS, 6921);
-                client.setFileType(FTP.BINARY_FILE_TYPE);
                 client.login("anon", "");
                 if (client.changeWorkingDirectory("groups/" + groupname)) {
-                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(localFile));
+                    client.setFileType(FTP.BINARY_FILE_TYPE);
                     client.enterLocalPassiveMode();
+                    FileOutputStream outputStream = new FileOutputStream(localFile);
                     if (client.retrieveFile(filename, outputStream)) {
-                        downloadLocation = localFile.getAbsolutePath();
+                        downloadLocation = localFile.getPath();
                     } else {
                         localFile.delete();
                     }
-                    client.disconnect();
                     outputStream.close();
                 } else {
                     localFile.delete();

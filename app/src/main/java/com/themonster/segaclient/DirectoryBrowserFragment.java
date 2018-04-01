@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -245,7 +246,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                 GetFileFromServerTask task = new GetFileFromServerTask(DirectoryBrowserFragment.this);
                 if (selectedIndex != -1) {
                     FileAttributes fileAttributes = (FileAttributes) ((ListView) getView().findViewById(R.id.fileListViewBrowserFragment)).getItemAtPosition(selectedIndex);
-                    task.execute(groupname, fileAttributes.getFileName());
+                    task.execute(groupname, fileAttributes.getFileName(), Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath());
                     selectedIndex = -1;
                 }
             }
