@@ -26,9 +26,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.codekidlabs.storagechooser.StorageChooser;
+import com.vincent.filepicker.Constant;
+import com.vincent.filepicker.activity.NormalFilePickActivity;
+import com.vincent.filepicker.filter.entity.NormalFile;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import SEGAMessages.DeleteFileFromGroupRequest;
@@ -36,6 +37,8 @@ import SEGAMessages.DeleteFileFromGroupResponse;
 import SEGAMessages.FileAttributes;
 import SEGAMessages.GetFilesForGroupRequest;
 import SEGAMessages.GetFilesForGroupResponse;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -126,6 +129,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                     ((TextView) listItem.findViewById(R.id.fileNameListItem)).setText(
                             String.format("%.32s", fileAttributes.getFileName() + (fileAttributes.getFileName().length() > 32 ? "..." : ""))
                     );
+                    ((TextView) listItem.findViewById(R.id.fileTypeListItem)).setText(String.format("%.10s", fileAttributes.getFileType()));
                     ((TextView) listItem.findViewById(R.id.fileSizeListItem)).setText(Formatter.formatShortFileSize(getContext(), fileAttributes.getFileSize()));
                     listItem.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -219,26 +223,10 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     public void onRequestPermissionsResult(int permsRequestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (permsRequestCode == 200) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                StorageChooser storageChooser = new StorageChooser.Builder()
-                        .withActivity(getActivity())
-                        .withFragmentManager(getFragmentManager())
-                        .disableMultiSelect()
-                        .allowCustomPath(true)
-                        .setType(StorageChooser.FILE_PICKER)
-                        .showFoldersInGrid(true)
-                        .build();
-                storageChooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
-                    @Override
-                    public void onSelect(String fileName) {
-                        Log.d("File selected", fileName);
-                        File file = new File(fileName);
-                        if (file.exists()) {
-                            SendFileToServerTask task = new SendFileToServerTask(DirectoryBrowserFragment.this);
-                            task.execute(groupname, fileName);
-                        }
-                    }
-                });
-                storageChooser.show();
+                Intent intent = new Intent(getActivity(), NormalFilePickActivity.class);
+                intent.putExtra(Constant.MAX_NUMBER, 3);
+                intent.putExtra(NormalFilePickActivity.SUFFIX, new String[]{"pdf", "jpg"});
+                startActivityForResult(intent, Constant.REQUEST_CODE_PICK_FILE);
             }
         }
         if (permsRequestCode == 201) {
@@ -288,5 +276,19 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.REQUEST_CODE_PICK_FILE) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<NormalFile> list = data.getParcelableArrayListExtra(Constant.RESULT_PICK_FILE);
+                for (NormalFile normalFile : list) {
+                    SendFileToServerTask task = new SendFileToServerTask(this);
+                    task.execute(groupname, normalFile.getPath());
+                }
+            }
+        }
     }
 }
