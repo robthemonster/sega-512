@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     int size;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Constants.setStore(this);
         dialog = new ProgressDialog(LoginActivity.this);
         size  = getResources().getStringArray(R.array.loading_memes).length;
         super.onCreate(savedInstanceState);

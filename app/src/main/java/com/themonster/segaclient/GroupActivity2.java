@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,10 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -28,7 +24,6 @@ import SEGAMessages.AddUserToGroupRequest;
 import SEGAMessages.AddUserToGroupResponse;
 import SEGAMessages.DeleteUserFromGroupRequest;
 import SEGAMessages.DeleteUserFromGroupResponse;
-import SEGAMessages.GetGroupsForUserRequest;
 import SEGAMessages.GetUsersForGroupRequest;
 import SEGAMessages.GetUsersForGroupResponse;
 import SEGAMessages.RequestAuthorizationFromGroupRequest;
@@ -131,7 +126,7 @@ public class GroupActivity2 extends AppCompatActivity {
             }
         });
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.group_members_swipe_container);
+        mSwipeRefreshLayout = findViewById(R.id.group_members_swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
