@@ -36,7 +36,4 @@ dependencies {
     compile 'com.vincent.filepicker:MultiTypeFilePicker:1.0.7'
 }
 
-
-
-
 apply plugin: 'com.google.gms.google-services'

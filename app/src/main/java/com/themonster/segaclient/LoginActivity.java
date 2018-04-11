@@ -20,6 +20,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jcraft.jsch.JSchException;
+
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Random;
 
 import SEGAMessages.UserLoginRequest;
@@ -34,11 +41,17 @@ public class LoginActivity extends AppCompatActivity {
     ProgressDialog dialog;
     Random random = new Random();
     int size;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Constants.setStore(this);
+        try {
+            Constants.init(this);
+        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException | JSchException e) {
+            e.printStackTrace();
+            // nothing will work from here
+        }
         dialog = new ProgressDialog(LoginActivity.this);
-        size  = getResources().getStringArray(R.array.loading_memes).length;
+        size = getResources().getStringArray(R.array.loading_memes).length;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         fab = findViewById(R.id.fab);
@@ -75,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                     dialog.setMessage(getResources().getStringArray(R.array.loading_memes)[random.nextInt(size)] + "...");
                     dialog.setCancelable(false);
                     dialog.show();
-                   // findViewById(R.id.spinnyDoodleLogin).setVisibility(View.VISIBLE);
+                    // findViewById(R.id.spinnyDoodleLogin).setVisibility(View.VISIBLE);
                     return true;
                 }
                 return false;
@@ -118,4 +131,9 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dialog.dismiss();
+    }
 }

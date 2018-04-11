@@ -28,9 +28,9 @@ public class DashboardActivity2 extends AppCompatActivity {
 
     TextView nameTV;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    Toast toast;
     private AlertDialog mDialog;
     private ArrayList<String> groups = new ArrayList<>();
-    Toast toast;
     private RecyclerView mRecyclerView;
     private GroupsAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -101,22 +101,16 @@ public class DashboardActivity2 extends AppCompatActivity {
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, intentFilter);
-
-
-
-
-
-
     }
+
     protected void onResume() {
         super.onResume();
-       // ((TextView) findViewById(R.id.usernameDashboard)).setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
-        Log.d("DashBoardActivity2", "onresumecalled "+ getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        // ((TextView) findViewById(R.id.usernameDashboard)).setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        Log.d("DashBoardActivity2", "onresumecalled " + getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
         refresh();
     }
 
-    void refresh()
-    {
+    void refresh() {
         final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
         request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString("username", ""));
         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
@@ -126,10 +120,9 @@ public class DashboardActivity2 extends AppCompatActivity {
 
     public void onBackPressed() {
 
-
         if (mDialog == null) // https://stackoverflow.com/questions/14910602/how-to-use-alertdialog
         {
-            mDialog =  new AlertDialog.Builder(this)
+            mDialog = new AlertDialog.Builder(this)
                     .setTitle("Confirm Logout")
                     .setMessage("Are you sure you want to log out?")
                     .setPositiveButton("YES",
@@ -137,7 +130,7 @@ public class DashboardActivity2 extends AppCompatActivity {
 
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Log.i("MyTag" , "Click YES");
+                                    Log.i("MyTag", "Click YES");
                                     //TODO rob here is where to clear out stuffs in the DB
                                     Intent i = new Intent(DashboardActivity2.this, LoginActivity.class);
                                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

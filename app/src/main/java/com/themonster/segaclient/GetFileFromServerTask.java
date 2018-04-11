@@ -3,11 +3,13 @@ package com.themonster.segaclient;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -25,9 +27,10 @@ public class GetFileFromServerTask extends AsyncTask<String, Float, Void> {
     @Override
     protected Void doInBackground(String... strings) {
         String groupname = strings[0];
-        String filename = strings[1];
-        String filesDir = strings[2];
-        FTPClient client = new FTPClient();
+        String token = strings[1];
+        String filename = strings[2];
+        String filesDir = strings[3];
+
         try {
             File localFile = new File(filesDir + File.separator + "groups" + File.separator + groupname + File.separator + filename);
             if (!localFile.getParentFile().getParentFile().exists()) {
@@ -40,27 +43,19 @@ public class GetFileFromServerTask extends AsyncTask<String, Float, Void> {
                 localFile.delete();
             }
             if (localFile.createNewFile()) {
-                client.connect(Constants.SEGA_SERVER_DNS, 6921);
-                client.login("anon", "");
-                if (client.changeWorkingDirectory("groups/" + groupname)) {
-                    client.setFileType(FTP.BINARY_FILE_TYPE);
-                    client.enterLocalPassiveMode();
-                    FileOutputStream outputStream = new FileOutputStream(localFile);
-                    if (client.retrieveFile(filename, outputStream)) {
-                        downloadLocation = localFile.getPath();
-                    } else {
-                        localFile.delete();
-                    }
-                    outputStream.close();
-                } else {
-                    localFile.delete();
-                    Log.d("cwd", "error changing directory on remote server");
-                }
-                client.disconnect();
+                Session session = Constants.jSch.getSession(groupname, Constants.SEGA_SERVER_DNS, 6921);
+                session.setPassword(token);
+                session.connect();
+                Channel channel = session.openChannel("sftp");
+                channel.connect();
+                ChannelSftp sftp = (ChannelSftp) channel;
+                sftp.cd("groups/" + groupname);
+                sftp.get(filename, localFile.getAbsolutePath());
+                downloadLocation = localFile.getPath();
             } else {
                 Log.d("create file", "error creating local file to contain download");
             }
-        } catch (IOException e) {
+        } catch (IOException | JSchException | SftpException e) {
             e.printStackTrace();
         }
         return null;

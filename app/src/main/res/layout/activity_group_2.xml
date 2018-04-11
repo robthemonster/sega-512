@@ -30,7 +30,6 @@
             android:onClick="AddUserToGroup"
             app:srcCompat="@android:drawable/ic_input_add" />
 
-
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/group_members_request_fab"
             android:layout_width="wrap_content"
@@ -44,8 +43,6 @@
             android:layout_marginRight="20dp"
             android:onClick="RequestAccess"
             app:srcCompat="@android:drawable/ic_popup_reminder" />
-
-
 
     </RelativeLayout>
 

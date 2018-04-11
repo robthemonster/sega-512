@@ -17,51 +17,16 @@ import java.util.Random;
 
 public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupsViewHolder> {
 
+    Random random = new Random();
     private ArrayList<String> strings;
-
     private OnItemClickListener mListener;
 
-    public interface OnItemClickListener{
-        void onItemClick(int position);
-
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener)
-    {
-        mListener = listener;
-    }
-
-
-    public static class GroupsViewHolder extends RecyclerView.ViewHolder {
-
-        public CardView cv;
-        public TextView mTextView;
-        public ImageView mImageView;
-        public GroupsViewHolder(View itemView, final OnItemClickListener listener) {
-            super(itemView);
-            mTextView= itemView.findViewById(R.id.cv_group_name);
-            cv = itemView.findViewById(R.id.cv);
-            mImageView = itemView.findViewById(R.id.cv_img);
-            itemView.setOnClickListener(new View.OnClickListener(){
-                public void onClick(View v)
-                {
-                    if (listener != null){
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION)
-                        {
-
-                            // cv.setCardBackgroundColor(Color.RED); //actually works if you want to include it
-                            listener.onItemClick(position);
-                        }
-                    }
-                }
-            });
-
-        }
-    }
-
-    public GroupsAdapter(ArrayList<String> strs){
+    public GroupsAdapter(ArrayList<String> strs) {
         strings = strs;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
     }
 
     @Override
@@ -84,25 +49,61 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupsView
         return strings.size();
     }
 
-    Random random = new Random();
-
-    int chooseDrawable()
-    {
+    int chooseDrawable() {
         int size = 7;
         int choice = random.nextInt(size);
         switch (1) {
 
-            case 0: return R.drawable.grey_card;
-            case 1: return R.drawable.blue_card;
-            case 2: return R.drawable.teal_card;
-            case 3: return R.drawable.yellow_card;
-            case 4: return R.drawable.orange_card;
-            case 5: return R.drawable.pink_card;
-            case 6: return R.drawable.red_card;
+            case 0:
+                return R.drawable.grey_card;
+            case 1:
+                return R.drawable.blue_card;
+            case 2:
+                return R.drawable.teal_card;
+            case 3:
+                return R.drawable.yellow_card;
+            case 4:
+                return R.drawable.orange_card;
+            case 5:
+                return R.drawable.pink_card;
+            case 6:
+                return R.drawable.red_card;
 
         }
 
         return R.drawable.teal_card;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+
+    }
+
+    public static class GroupsViewHolder extends RecyclerView.ViewHolder {
+
+        public CardView cv;
+        public TextView mTextView;
+        public ImageView mImageView;
+
+        public GroupsViewHolder(View itemView, final OnItemClickListener listener) {
+            super(itemView);
+            mTextView = itemView.findViewById(R.id.cv_group_name);
+            cv = itemView.findViewById(R.id.cv);
+            mImageView = itemView.findViewById(R.id.cv_img);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+
+                            // cv.setCardBackgroundColor(Color.RED); //actually works if you want to include it
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+
+        }
     }
 
 }

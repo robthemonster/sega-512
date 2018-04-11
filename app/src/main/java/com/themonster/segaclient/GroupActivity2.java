@@ -33,10 +33,10 @@ public class GroupActivity2 extends AppCompatActivity {
 
     AlertDialog.Builder builder;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    ArrayList<String> usersInGroup = new ArrayList<>();
     private RecyclerView mRecyclerView;
     private GroupMembersAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    ArrayList<String> usersInGroup = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +52,9 @@ public class GroupActivity2 extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 DeleteUserFromGroupResponse response = (DeleteUserFromGroupResponse) intent.getSerializableExtra("response");
-                if (!response.isSucceeded()){
-                    Toast.makeText(getApplicationContext(),response.getErrorMessage(),Toast.LENGTH_SHORT ).show();
-                }
-                else {
+                if (!response.isSucceeded()) {
+                    Toast.makeText(getApplicationContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                } else {
                     Toast.makeText(getApplicationContext(), response.getDeletedUser() + " was removed from " + response.getGroupname(), Toast.LENGTH_SHORT).show();
                     refresh();
                 }
@@ -63,15 +62,13 @@ public class GroupActivity2 extends AppCompatActivity {
             }
         }, intentFilter2);
 
-
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GetUsersForGroupResponse.TYPE);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 GetUsersForGroupResponse response = (GetUsersForGroupResponse) intent.getSerializableExtra("response");
-                if (response.getUsers() == null){
+                if (response.getUsers() == null) {
                     Log.d("users", "users was null");
                 }
                 usersInGroup.clear();
@@ -81,7 +78,6 @@ public class GroupActivity2 extends AppCompatActivity {
 
             }
         }, intentFilter);
-
 
         setTitle(getIntent().getStringExtra(Constants.GROUPNAME_EXTRA) + "'s members");
         //nameTV.setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "") + "'s groups");
@@ -135,8 +131,6 @@ public class GroupActivity2 extends AppCompatActivity {
             }
         });
 
-
-
         /*----------------------------------------------------------------------------*/
 
     /*
@@ -148,9 +142,6 @@ public class GroupActivity2 extends AppCompatActivity {
         task.execute();
         */
 
-
-
-
         /*----------------------------------------------------------------------------*/
     }
 
@@ -159,8 +150,7 @@ public class GroupActivity2 extends AppCompatActivity {
         refresh();
     }
 
-    void refresh()
-    {
+    void refresh() {
         String username = getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "");
         String groupName = getIntent().getStringExtra(Constants.GROUPNAME_EXTRA);
 
@@ -173,8 +163,6 @@ public class GroupActivity2 extends AppCompatActivity {
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         task.execute();
     }
-
-
 
     public void RequestAccess(View view) {
         final RequestAuthorizationFromGroupRequest request = new RequestAuthorizationFromGroupRequest();
@@ -192,7 +180,7 @@ public class GroupActivity2 extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), request.getGroupName() + " authorized your request!", Toast.LENGTH_SHORT).show();
                     Intent launchBrowser = new Intent(getIntent());
                     Log.d("test", launchBrowser.getExtras().getString(Constants.GROUPNAME_EXTRA) == getIntent().getExtras().getString(Constants.GROUPNAME_EXTRA) ? "yes" : "no");
-
+                    launchBrowser.putExtra("token", response.getToken());
                     launchBrowser.setClass(getApplicationContext(), DirectoryBrowserActivity.class);
                     startActivity(launchBrowser);
                 } else {

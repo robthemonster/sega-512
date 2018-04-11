@@ -40,25 +40,15 @@ import SEGAMessages.GetFilesForGroupResponse;
 
 import static android.app.Activity.RESULT_OK;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DirectoryBrowserFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DirectoryBrowserFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DirectoryBrowserFragment extends Fragment implements SendFileToServerTask.SendFileToServerCallBack, GetFileFromServerTask.GetFileFromServerCallBack {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
     private static final String ARG_GROUPNAME = "groupname";
     private static final String ARG_USERNAME = "username";
+    private static final String ARG_TOKEN = "token";
 
-    // TODO: Rename and change types of parameters
     private String groupname;
     private String username;
+    private String token;
     private int selectedIndex = -1;
 
     private ArrayList<FileAttributes> fileList = new ArrayList<>();
@@ -69,20 +59,12 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param groupname Parameter 1.
-     * @param username  Parameter 2.
-     * @return A new instance of fragment DirectoryBrowserFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DirectoryBrowserFragment newInstance(String groupname, String username) {
+    public static DirectoryBrowserFragment newInstance(String groupname, String username, String token) {
         DirectoryBrowserFragment fragment = new DirectoryBrowserFragment();
         Bundle args = new Bundle();
         args.putString(ARG_GROUPNAME, groupname);
         args.putString(ARG_USERNAME, username);
+        args.putString(ARG_TOKEN, token);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,6 +75,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         if (getArguments() != null) {
             groupname = getArguments().getString(ARG_GROUPNAME);
             username = getArguments().getString(ARG_USERNAME);
+            token = getArguments().getString(ARG_TOKEN);
             refreshFileList();
         }
     }
@@ -103,7 +86,6 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_directory_browser, container, false);
     }
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -234,14 +216,13 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                 GetFileFromServerTask task = new GetFileFromServerTask(DirectoryBrowserFragment.this);
                 if (selectedIndex != -1) {
                     FileAttributes fileAttributes = (FileAttributes) ((ListView) getView().findViewById(R.id.fileListViewBrowserFragment)).getItemAtPosition(selectedIndex);
-                    task.execute(groupname, fileAttributes.getFileName(), Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath());
+                    task.execute(groupname, token, fileAttributes.getFileName(), Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath());
                     selectedIndex = -1;
                 }
             }
 
         }
     }
-
 
     @Override
     public void downloadCompleted(String location) {
@@ -263,21 +244,6 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         Toast.makeText(getContext(), "Upload complete!", Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -286,9 +252,14 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                 ArrayList<NormalFile> list = data.getParcelableArrayListExtra(Constant.RESULT_PICK_FILE);
                 for (NormalFile normalFile : list) {
                     SendFileToServerTask task = new SendFileToServerTask(this);
-                    task.execute(groupname, normalFile.getPath());
+                    task.execute(groupname, token, normalFile.getPath());
                 }
             }
         }
+    }
+
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 }

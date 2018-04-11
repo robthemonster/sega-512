@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import SEGAMessages.GetGroupsForUserRequest;
 import SEGAMessages.GetGroupsForUserResponse;
+
 @Deprecated
 public class DashboardActivity extends AppCompatActivity {
 
@@ -34,8 +35,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         final String username = getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "");
@@ -112,7 +111,7 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         ((TextView) findViewById(R.id.usernameDashboard)).setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
-        Log.d("DashBoardActivity", "onresumecalled "+ getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        Log.d("DashBoardActivity", "onresumecalled " + getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
         final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
         request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString("username", ""));
         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
@@ -121,11 +120,9 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     public void onBackPressed() {
-
-
         if (mDialog == null) // https://stackoverflow.com/questions/14910602/how-to-use-alertdialog
         {
-            mDialog =  new AlertDialog.Builder(this)
+            mDialog = new AlertDialog.Builder(this)
                     .setTitle("Confirm Logout")
                     .setMessage("Are you sure you want to log out?")
                     .setPositiveButton("YES",
@@ -133,7 +130,7 @@ public class DashboardActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Log.i("MyTag" , "Click YES");
+                                    Log.i("MyTag", "Click YES");
                                     //TODO rob here is where to clear out stuffs
                                     Intent i = new Intent(DashboardActivity.this, LoginActivity.class);
                                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -153,8 +150,8 @@ public class DashboardActivity extends AppCompatActivity {
                             }).create();
         }
         // TODO Auto-generated method stub
-       // moveTaskToBack(true);
-       // super.onBackPressed();
+        // moveTaskToBack(true);
+        // super.onBackPressed();
         mDialog.show();
     }
 }

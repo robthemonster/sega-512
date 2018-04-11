@@ -88,7 +88,6 @@
         android:indeterminateDrawable="@drawable/phantom_spinner"
         android:visibility="invisible" />
 
-
     <!--
     // for now, simply check if the group password matches. //Todo
     -->

@@ -7,11 +7,16 @@ import android.view.View;
 
 public class DirectoryBrowserActivity extends AppCompatActivity implements DirectoryBrowserFragment.OnFragmentInteractionListener {
     DirectoryBrowserFragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directory_browser);
-        fragment = DirectoryBrowserFragment.newInstance(getIntent().getStringExtra(Constants.GROUPNAME_EXTRA), getIntent().getStringExtra(Constants.USERNAME_EXTRA));
+        fragment = DirectoryBrowserFragment.newInstance(
+                getIntent().getStringExtra(Constants.GROUPNAME_EXTRA),
+                getIntent().getStringExtra(Constants.USERNAME_EXTRA),
+                getIntent().getStringExtra("token")
+        );
         getFragmentManager().beginTransaction().replace(R.id.directoryBrowserFragment, fragment).commit();
     }
 
