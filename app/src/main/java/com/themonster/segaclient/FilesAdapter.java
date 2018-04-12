@@ -10,6 +10,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Random;
 
+import SEGAMessages.FileAttributes;
+
 /**
  * Created by CJ Hernaez on 3/24/2018.
  */
@@ -17,11 +19,11 @@ import java.util.Random;
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHolder> {
 
     Random random = new Random();
-    private ArrayList<CustomFiles> files;
+    private ArrayList<FileAttributes> files;
     private OnItemClickListener mListener;
     private OnItemLongClickListener mLCListener;
 
-    public FilesAdapter(ArrayList<CustomFiles> files) {
+    public FilesAdapter(ArrayList<FileAttributes> files) {
         this.files = files;
     }
 
@@ -37,14 +39,14 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
     @Override
     public FilesAdapter.FilesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_groups, parent, false);
-        FilesViewHolder evh = new FilesViewHolder(v, mListener);
+        FilesViewHolder evh = new FilesViewHolder(v, mListener, mLCListener);
         return evh;
     }
 
     @Override
     public void onBindViewHolder(FilesAdapter.FilesViewHolder holder, int position) {
-        CustomFiles currItem = files.get(position);
-        holder.mTextView.setText(currItem.getFilename());
+        FileAttributes currItem = files.get(position);
+        holder.mTextView.setText(currItem.getFileName());
         //holder.mImageView.setImageResource(R.drawable.frame1);
 
     }
@@ -71,7 +73,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
         public TextView mTextView;
         //public ImageView mImageView;
 
-        public FilesViewHolder(View itemView, final OnItemClickListener listener) {
+        public FilesViewHolder(View itemView, final OnItemClickListener listener, final OnItemLongClickListener LListener) {
             super(itemView);
             mTextView = itemView.findViewById(R.id.cv_group_name);
             cv = itemView.findViewById(R.id.cv);
@@ -88,7 +90,20 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
                     }
                 }
             });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
 
+                            // cv.setCardBackgroundColor(Color.RED); //actually works if you want to include it
+                            LListener.onLongClick(position);
+                        }
+                    }
+                    return true;
+                }
+            });
         }
     }
 
