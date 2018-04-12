@@ -11,29 +11,35 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Random;
 
-class GroupMembersAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupsViewHolder> {
+class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapter.GroupMembersViewHolder> {
 
     Random random = new Random();
     private ArrayList<String> strings;
-    private GroupsAdapter.OnItemClickListener mListener;
-
+    private GroupMembersAdapter.OnItemClickListener mListener;
+    private GroupMembersAdapter.OnItemLongClickListener mLCListener;
     public GroupMembersAdapter(ArrayList<String> strs) {
         strings = strs;
     }
 
-    public void setOnItemClickListener(GroupsAdapter.OnItemClickListener listener) {
+    public void setOnItemClickListener(GroupMembersAdapter.OnItemClickListener listener) {
         mListener = listener;
     }
 
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        mLCListener = listener;
+    }
+
+
+
     @Override
-    public GroupsAdapter.GroupsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public GroupMembersAdapter.GroupMembersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_group_members, parent, false);
-        GroupsAdapter.GroupsViewHolder evh = new GroupsAdapter.GroupsViewHolder(v, mListener);
+        GroupMembersAdapter.GroupMembersViewHolder evh = new GroupMembersAdapter.GroupMembersViewHolder(v, mListener, mLCListener);
         return evh;
     }
 
     @Override
-    public void onBindViewHolder(GroupsAdapter.GroupsViewHolder holder, int position) {
+    public void onBindViewHolder(GroupMembersAdapter.GroupMembersViewHolder holder, int position) {
         String currItem = strings.get(position);
         holder.mTextView.setText(currItem);
         //holder.mImageView.setImageResource(R.drawable.frame1);
@@ -75,13 +81,17 @@ class GroupMembersAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupsViewH
 
     }
 
-    public static class GroupsViewHolder extends RecyclerView.ViewHolder {
+    public interface OnItemLongClickListener {
+        boolean onLongPress(int position);
+    }
+
+    public static class GroupMembersViewHolder extends RecyclerView.ViewHolder {
 
         public CardView cv;
         public TextView mTextView;
         public ImageView mImageView;
 
-        public GroupsViewHolder(View itemView, final GroupsAdapter.OnItemClickListener listener) {
+        public GroupMembersViewHolder(View itemView, final GroupMembersAdapter.OnItemClickListener listener, final GroupMembersAdapter.OnItemLongClickListener Longlistener) {
             super(itemView);
             mTextView = itemView.findViewById(R.id.cv_group_name);
             cv = itemView.findViewById(R.id.cv);
@@ -98,7 +108,21 @@ class GroupMembersAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupsViewH
                     }
                 }
             });
+            itemView.setLongClickable(true);
 
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                public boolean onLongClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+
+                            // cv.setCardBackgroundColor(Color.RED); //actually works if you want to include it
+                            Longlistener.onLongPress(position);
+                        }
+                    }
+                    return true;
+                }
+            });
         }
     }
 

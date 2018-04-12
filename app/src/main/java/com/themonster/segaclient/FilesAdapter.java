@@ -1,0 +1,95 @@
+package com.themonster.segaclient;
+
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ * Created by CJ Hernaez on 3/24/2018.
+ */
+
+public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHolder> {
+
+    Random random = new Random();
+    private ArrayList<CustomFiles> files;
+    private OnItemClickListener mListener;
+    private OnItemLongClickListener mLCListener;
+
+    public FilesAdapter(ArrayList<CustomFiles> files) {
+        this.files = files;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        mLCListener = listener;
+    }
+
+
+    @Override
+    public FilesAdapter.FilesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_groups, parent, false);
+        FilesViewHolder evh = new FilesViewHolder(v, mListener);
+        return evh;
+    }
+
+    @Override
+    public void onBindViewHolder(FilesAdapter.FilesViewHolder holder, int position) {
+        CustomFiles currItem = files.get(position);
+        holder.mTextView.setText(currItem.getFilename());
+        //holder.mImageView.setImageResource(R.drawable.frame1);
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return files.size();
+
+    }
+
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+
+    }
+
+    public interface OnItemLongClickListener {
+        boolean onLongClick(int position);
+    }
+
+    public static class FilesViewHolder extends RecyclerView.ViewHolder {
+
+        public CardView cv;
+        public TextView mTextView;
+        //public ImageView mImageView;
+
+        public FilesViewHolder(View itemView, final OnItemClickListener listener) {
+            super(itemView);
+            mTextView = itemView.findViewById(R.id.cv_group_name);
+            cv = itemView.findViewById(R.id.cv);
+            // mImageView = itemView.findViewById(R.id.cv_img);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+
+                            // cv.setCardBackgroundColor(Color.RED); //actually works if you want to include it
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+
+        }
+    }
+
+}

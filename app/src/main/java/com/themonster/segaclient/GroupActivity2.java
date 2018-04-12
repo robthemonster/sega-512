@@ -88,7 +88,7 @@ public class GroupActivity2 extends AppCompatActivity {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new GroupMembersAdapter(usersInGroup);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new GroupsAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new GroupMembersAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
 
@@ -122,6 +122,13 @@ public class GroupActivity2 extends AppCompatActivity {
             }
         });
 
+        mAdapter.setOnItemLongClickListener(new GroupMembersAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onLongPress(int position) {
+                Toast.makeText(getApplicationContext(), "Will Implement Soon TM", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
         mSwipeRefreshLayout = findViewById(R.id.group_members_swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

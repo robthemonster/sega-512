@@ -54,7 +54,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            android:screenOrientation="portrait"
+
         </activity>
         <activity android:name=".DirectoryBrowserActivity"
             android:screenOrientation="portrait"/>
