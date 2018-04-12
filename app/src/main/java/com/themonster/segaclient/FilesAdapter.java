@@ -38,7 +38,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
 
     @Override
     public FilesAdapter.FilesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_groups, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_files, parent, false);
         FilesViewHolder evh = new FilesViewHolder(v, mListener, mLCListener);
         return evh;
     }
@@ -47,7 +47,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
     public void onBindViewHolder(FilesAdapter.FilesViewHolder holder, int position) {
         FileAttributes currItem = files.get(position);
         holder.mTextView.setText(currItem.getFileName());
-        //holder.mImageView.setImageResource(R.drawable.frame1);
+        holder.cv.setBackgroundResource(R.drawable.red_card);
 
     }
 
@@ -75,8 +75,8 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
 
         public FilesViewHolder(View itemView, final OnItemClickListener listener, final OnItemLongClickListener LListener) {
             super(itemView);
-            mTextView = itemView.findViewById(R.id.cv_group_name);
-            cv = itemView.findViewById(R.id.cv);
+            mTextView = itemView.findViewById(R.id.cv_file_name);
+            cv = itemView.findViewById(R.id.cv_files);
             // mImageView = itemView.findViewById(R.id.cv_img);
             itemView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {

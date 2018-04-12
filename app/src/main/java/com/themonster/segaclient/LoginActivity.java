@@ -73,7 +73,9 @@ public class LoginActivity extends AppCompatActivity {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                countDownTimer.cancel();
+                if (countDownTimer != null) {
+                    countDownTimer.cancel();
+                }
                 UserLoginResponse response = (UserLoginResponse) intent.getSerializableExtra("response");
                 if (response != null) {
                     if (response.isSucceeded()) { //TODO: account for if login failed
@@ -137,7 +139,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void resetFields() {
-        countDownTimer.cancel();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(broadcastReceiver);
         ((EditText) findViewById(R.id.passwordLogin)).getText().clear();
         dialog.dismiss();
@@ -147,7 +151,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void launchDashBoard(String username) {
-        countDownTimer.cancel();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
         dialog.dismiss();
         Intent intent = new Intent(this, DashboardActivity2.class);

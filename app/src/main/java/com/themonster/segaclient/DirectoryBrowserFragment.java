@@ -16,14 +16,14 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.format.Formatter;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vincent.filepicker.Constant;
@@ -45,11 +45,15 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     private static final String ARG_GROUPNAME = "groupname";
     private static final String ARG_USERNAME = "username";
     private static final String ARG_TOKEN = "token";
-
+    android.support.v7.app.AlertDialog.Builder builder;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     private String groupname;
     private String username;
     private String token;
     private int selectedIndex = -1;
+    private RecyclerView mRecyclerView;
+    private FilesAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     private ArrayList<FileAttributes> fileList = new ArrayList<>();
 
@@ -78,6 +82,8 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             token = getArguments().getString(ARG_TOKEN);
             refreshFileList();
         }
+
+
     }
 
     @Override
@@ -98,66 +104,76 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getView() != null) {
-            final ListView listView = getView().findViewById(R.id.fileListViewBrowserFragment);
-            listView.setAdapter(new ArrayAdapter<FileAttributes>(getContext(), R.layout.group_directory_file_list_item, fileList) {
-                @NonNull
+            super.onActivityCreated(savedInstanceState);
+            mRecyclerView = getActivity().findViewById(R.id.files_recycler_view);
+            mRecyclerView.setHasFixedSize(false);
+            mLayoutManager = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            mAdapter = new FilesAdapter(fileList);
+            mRecyclerView.setAdapter(mAdapter);
+
+          /*  mSwipeRefreshLayout = getActivity().findViewById(R.id.files_swipe_container);
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
-                public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    View listItem = convertView;
-                    if (listItem == null) {
-                        listItem = LayoutInflater.from(getContext()).inflate(R.layout.group_directory_file_list_item, parent, false);
-                    }
-                    final FileAttributes fileAttributes = fileList.get(position);
-                    ((TextView) listItem.findViewById(R.id.fileNameListItem)).setText(
-                            String.format("%.32s", fileAttributes.getFileName() + (fileAttributes.getFileName().length() > 32 ? "..." : ""))
-                    );
-                    ((TextView) listItem.findViewById(R.id.fileTypeListItem)).setText(String.format("%.10s", fileAttributes.getFileType()));
-                    ((TextView) listItem.findViewById(R.id.fileSizeListItem)).setText(Formatter.formatShortFileSize(getContext(), fileAttributes.getFileSize()));
-                    listItem.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            DialogInterface.OnClickListener download = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    selectedIndex = position;
-                                    String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                                    requestPermissions(permissions, 201);
-                                }
-                            };
-                            DialogInterface.OnClickListener delete = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    IntentFilter intentFilter = new IntentFilter();
-                                    intentFilter.addAction(DeleteFileFromGroupResponse.TYPE);
-                                    LocalBroadcastManager.getInstance(getContext()).registerReceiver(new BroadcastReceiver() {
-                                        @Override
-                                        public void onReceive(Context context, Intent intent) {
-                                            DeleteFileFromGroupResponse response = (DeleteFileFromGroupResponse) intent.getSerializableExtra("response");
-                                            Toast.makeText(getContext(), response.isSucceeded() ? "File deleted" : response.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                                            if (response.isSucceeded()) {
-                                                refreshFileList();
-                                            }
-                                        }
-                                    }, intentFilter);
-                                    DeleteFileFromGroupRequest request = new DeleteFileFromGroupRequest();
-                                    request.setFilename(fileAttributes.getFileName());
-                                    request.setGroupname(groupname);
-                                    request.setUsername(username);
-                                    request.setFirebaseToken(Constants.getFirebaseToken(getContext()));
-                                    SendRequestToServerTask task = new SendRequestToServerTask(request);
-                                    task.execute();
-                                }
-                            };
-                            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
-                            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Download", download);
-                            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Delete", delete);
-                            alertDialog.show();
-                        }
-                    });
-                    return listItem;
+                public void onRefresh() {
+
+                    refresh();
                 }
             });
+*/
+            mAdapter.setOnItemClickListener(new FilesAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(final int position) {
+                    final FileAttributes fileAttributes = fileList.get(position);
 
+
+                    DialogInterface.OnClickListener download = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            selectedIndex = position;
+                            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                            requestPermissions(permissions, 201);
+                        }
+                    };
+                    DialogInterface.OnClickListener delete = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            IntentFilter intentFilter = new IntentFilter();
+                            intentFilter.addAction(DeleteFileFromGroupResponse.TYPE);
+                            LocalBroadcastManager.getInstance(getContext()).registerReceiver(new BroadcastReceiver() {
+                                @Override
+                                public void onReceive(Context context, Intent intent) {
+                                    DeleteFileFromGroupResponse response = (DeleteFileFromGroupResponse) intent.getSerializableExtra("response");
+                                    Toast.makeText(getContext(), response.isSucceeded() ? "File deleted" : response.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                                    if (response.isSucceeded()) {
+                                        refreshFileList();
+                                    }
+                                }
+                            }, intentFilter);
+                            DeleteFileFromGroupRequest request = new DeleteFileFromGroupRequest();
+                            request.setFilename(fileAttributes.getFileName());
+                            request.setGroupname(groupname);
+                            request.setUsername(username);
+                            request.setFirebaseToken(Constants.getFirebaseToken(getContext()));
+                            SendRequestToServerTask task = new SendRequestToServerTask(request);
+                            task.execute();
+                        }
+                    };
+                    AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Download", download);
+                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Delete", delete);
+                    alertDialog.show();
+                }
+
+            });
+            mAdapter.setOnItemLongClickListener(new FilesAdapter.OnItemLongClickListener() {
+                @Override
+                public boolean onLongClick(int position) {
+                    Toast.makeText(DirectoryBrowserFragment.super.getActivity().getApplicationContext(), "Will Implement Soon TM", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(GetFilesForGroupResponse.TYPE);
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(new BroadcastReceiver() {
@@ -169,7 +185,10 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                     }
                     fileList.clear();
                     fileList.addAll(response.getFiles());
-                    ((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
+                    //((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
+                    //mSwipeRefreshLayout.setRefreshing(false);
+
                 }
             }, intentFilter);
         }
@@ -215,7 +234,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 GetFileFromServerTask task = new GetFileFromServerTask(DirectoryBrowserFragment.this);
                 if (selectedIndex != -1) {
-                    FileAttributes fileAttributes = (FileAttributes) ((ListView) getView().findViewById(R.id.fileListViewBrowserFragment)).getItemAtPosition(selectedIndex);
+                    FileAttributes fileAttributes = fileList.get(selectedIndex);
                     task.execute(groupname, token, fileAttributes.getFileName(), Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath());
                     selectedIndex = -1;
                 }
@@ -239,6 +258,9 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    void refresh() {
+        Log.d("test", "test");
+    }
     @Override
     public void announceUploadCompleted() {
         Toast.makeText(getContext(), "Upload complete!", Toast.LENGTH_SHORT).show();
