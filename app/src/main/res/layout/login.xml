@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="24dp">
 
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="Existing User"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="24sp" />
 
 
@@ -34,11 +34,13 @@
                 android:id="@+id/usernameLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/white"
                 android:hint="@string/username"
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 android:maxLines="1"
-                android:nextFocusForward="@id/passwordLogin">
+                android:nextFocusForward="@id/passwordLogin"
+                android:textColor="@android:color/white">
 
                 <requestFocus />
             </android.support.design.widget.TextInputEditText>
@@ -52,18 +54,20 @@
                 android:id="@+id/passwordLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/white"
                 android:hint="@string/password"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:textColor="@android:color/white" />
         </android.support.design.widget.TextInputLayout>
 
         <ProgressBar
             android:id="@+id/spinnyDoodleLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateDrawable="@drawable/phantom_spinner"
             android:layout_gravity="center_horizontal"
+            android:indeterminateDrawable="@drawable/phantom_spinner"
             android:visibility="invisible" />
 
     </LinearLayout>
@@ -79,11 +83,11 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:backgroundTint="@color/yellowish"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_margin="2dp"
             android:layout_gravity="bottom|right"
+            android:layout_margin="2dp"
+            app:backgroundTint="@color/yellowish"
             app:srcCompat="@drawable/phantom_button"
             />
 

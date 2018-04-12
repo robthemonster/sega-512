@@ -93,10 +93,11 @@
         android:layout_width="64dp"
         android:layout_height="54dp"
         android:layout_gravity="left"
-
         android:layout_marginTop="250dp"
+
         android:background="@drawable/phantom_button"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:visibility="invisible" />
 
     <!--
     // for now, simply check if the group password matches. //Todo

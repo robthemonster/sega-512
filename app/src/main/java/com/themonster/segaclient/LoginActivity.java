@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.LocalBroadcastManager;
@@ -41,7 +42,8 @@ public class LoginActivity extends AppCompatActivity {
     ProgressDialog dialog;
     Random random = new Random();
     int size;
-
+    BroadcastReceiver broadcastReceiver;
+    CountDownTimer countDownTimer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
@@ -50,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
             // nothing will work from here
         }
+        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.experimentalorange));
         dialog = new ProgressDialog(LoginActivity.this);
         size = getResources().getStringArray(R.array.loading_memes).length;
         super.onCreate(savedInstanceState);
@@ -62,12 +65,36 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, CreateUserActivity.class));
             }
         });
+        final IntentFilter intentFilter = new IntentFilter();
+        loginFailedToast = Toast.makeText(getApplicationContext(), "login failed", Toast.LENGTH_SHORT);
+        intentFilter.addAction(UserLoginResponse.TYPE);
+
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                countDownTimer.cancel();
+                UserLoginResponse response = (UserLoginResponse) intent.getSerializableExtra("response");
+                if (response != null) {
+                    if (response.isSucceeded()) { //TODO: account for if login failed
+                        SharedPreferences sharedPreferences = getSharedPreferences("userCredentials", Context.MODE_PRIVATE);
+                        sharedPreferences.edit().putString(Constants.USERNAME_EXTRA, response.getUsername()).apply();
+                        launchDashBoard(response.getUsername());
+                    } else {
+                        Toast.makeText(getApplicationContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                        resetFields();
+                    }
+                }
+            }
+        };
+
 
         TextInputEditText editText = findViewById(R.id.passwordLogin);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE) {
+                    LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(broadcastReceiver, intentFilter);
                     EditText usernameEditText = findViewById(R.id.usernameLogin);
                     EditText passwordEditText = findViewById(R.id.passwordLogin);
                     usernameEditText.setEnabled(false);
@@ -88,34 +115,30 @@ public class LoginActivity extends AppCompatActivity {
                     dialog.setMessage(getResources().getStringArray(R.array.loading_memes)[random.nextInt(size)] + "...");
                     dialog.setCancelable(false);
                     dialog.show();
+                    countDownTimer = new CountDownTimer(20000, 1000) {
+
+                        public void onTick(long millisUntilFinished) {
+                            // mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
+                        }
+
+                        public void onFinish() {
+                            Toast.makeText(getApplicationContext(), "Request Timed Out", Toast.LENGTH_SHORT).show();
+                            resetFields();
+                        }
+                    }.start();
                     // findViewById(R.id.spinnyDoodleLogin).setVisibility(View.VISIBLE);
                     return true;
                 }
                 return false;
             }
         });
-        loginFailedToast = Toast.makeText(getApplicationContext(), "login failed", Toast.LENGTH_SHORT);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(UserLoginResponse.TYPE);
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                UserLoginResponse response = (UserLoginResponse) intent.getSerializableExtra("response");
-                if (response != null) {
-                    if (response.isSucceeded()) { //TODO: account for if login failed
-                        SharedPreferences sharedPreferences = getSharedPreferences("userCredentials", Context.MODE_PRIVATE);
-                        sharedPreferences.edit().putString(Constants.USERNAME_EXTRA, response.getUsername()).apply();
-                        launchDashBoard(response.getUsername());
-                    } else {
-                        Toast.makeText(getApplicationContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                        resetFields();
-                    }
-                }
-            }
-        }, intentFilter);
+
+
     }
 
     private void resetFields() {
+        countDownTimer.cancel();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(broadcastReceiver);
         ((EditText) findViewById(R.id.passwordLogin)).getText().clear();
         dialog.dismiss();
         findViewById(R.id.usernameLogin).setEnabled(true);
@@ -124,6 +147,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void launchDashBoard(String username) {
+        countDownTimer.cancel();
         findViewById(R.id.spinnyDoodleLogin).setVisibility(View.INVISIBLE);
         dialog.dismiss();
         Intent intent = new Intent(this, DashboardActivity2.class);
@@ -135,5 +159,14 @@ public class LoginActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         dialog.dismiss();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(broadcastReceiver);
     }
 }

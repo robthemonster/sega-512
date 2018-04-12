@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.LocalBroadcastManager;
@@ -38,11 +39,12 @@ public class CreateUserActivity extends AppCompatActivity {
     ProgressDialog dialog;
     Random random;
     int size;
-
+    BroadcastReceiver broadcastReceiver;
+    CountDownTimer countDownTimer;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         dialog = new ProgressDialog(CreateUserActivity.this);
-        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.loginsplash));
+        getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.experimentalblue));
         createUserFailedToast = Toast.makeText(getApplicationContext(), "Username taken!", Toast.LENGTH_SHORT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.createuser);
@@ -57,6 +59,27 @@ public class CreateUserActivity extends AppCompatActivity {
             }
         });
 
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                CreateUserResponse response = (CreateUserResponse) intent.getSerializableExtra("response");
+                if (response != null) {
+                    if (response.isSucceeded()) {
+                        returnToLogin();
+                    } else {
+                        //TODO: Account for if create user was unsuccessful
+                        createUserFailedToast.show();
+                        resetFields();
+                    }
+                }
+            }
+        };
+
+
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(CreateUserResponse.TYPE);
+
+
         TextInputEditText et = findViewById(R.id.passwordConfirmCreateUser);
         et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -70,6 +93,7 @@ public class CreateUserActivity extends AppCompatActivity {
                 }
                 else*/
                 if (/*passwordsmatch && */id == EditorInfo.IME_ACTION_DONE) {
+                    LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(broadcastReceiver, intentFilter);
                     passwordConfirmEditText.setEnabled(false);
                     usernameEditText.setEnabled(false);
                     passwordEditText.setEnabled(false);
@@ -97,10 +121,22 @@ public class CreateUserActivity extends AppCompatActivity {
                         dialog.setMessage(getResources().getStringArray(R.array.loading_memes)[random.nextInt(size)] + "...");
                         dialog.setCancelable(false);
                         dialog.show();
-                        findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.VISIBLE);
+                        //findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.VISIBLE);
+                        countDownTimer = new CountDownTimer(20000, 1000) {
+
+                            public void onTick(long millisUntilFinished) {
+                                // mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
+                            }
+
+                            public void onFinish() {
+                                Toast.makeText(getApplicationContext(), "Request Timed Out. Server Down?", Toast.LENGTH_SHORT).show();
+                                resetFields();
+                            }
+                        }.start();
                         return true;
                     } else // the passwords do not match
                     {
+                        countDownTimer.cancel();
                         passwordConfirmEditText.setHint("Passwords do not match");
                         Toast.makeText(CreateUserActivity.this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
                         passwordConfirmEditText.setEnabled(true);
@@ -112,26 +148,14 @@ public class CreateUserActivity extends AppCompatActivity {
                 return false;
             }
         });
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(CreateUserResponse.TYPE);
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                CreateUserResponse response = (CreateUserResponse) intent.getSerializableExtra("response");
-                if (response != null) {
-                    if (response.isSucceeded()) {
-                        returnToLogin();
-                    } else {
-                        //TODO: Account for if create user was unsuccessful
-                        createUserFailedToast.show();
-                        resetFields();
-                    }
-                }
-            }
-        }, intentFilter);
+
     }
 
     private void resetFields() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(broadcastReceiver);
         ((EditText) findViewById(R.id.usernameCreateUser)).getText().clear();
         ((EditText) findViewById(R.id.passwordConfirmCreateUser)).getText().clear();
         findViewById(R.id.passwordCreateUser).setEnabled(true);
@@ -142,6 +166,7 @@ public class CreateUserActivity extends AppCompatActivity {
     }
 
     public void returnToLogin() {
+        countDownTimer.cancel();
         findViewById(R.id.spinnyDoodleCreateUser).setVisibility(View.INVISIBLE);
         dialog.dismiss();
         finish();
@@ -175,6 +200,12 @@ public class CreateUserActivity extends AppCompatActivity {
             return getResources().getInteger(R.integer.special_character_error);
         }
         return 0;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(broadcastReceiver);
     }
 
 }
