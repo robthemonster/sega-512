@@ -23,6 +23,8 @@
             </intent-filter>
         </service>
 
+        <receiver android:name=".ApproveRequestBroadCastReceiver" />
+
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme.FullScreen">
