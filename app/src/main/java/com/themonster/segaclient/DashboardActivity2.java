@@ -66,7 +66,7 @@ public class DashboardActivity2 extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                // cancel the Visual indication of a refresh
                 refresh();
             }
         });

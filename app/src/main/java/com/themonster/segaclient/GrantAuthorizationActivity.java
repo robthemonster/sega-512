@@ -11,6 +11,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jcraft.jsch.JSchException;
+
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+
 import SEGAMessages.GrantAuthorizationForGroupRequest;
 import SEGAMessages.GrantAuthorizationForGroupResponse;
 
@@ -22,6 +30,11 @@ public class GrantAuthorizationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grant_authorization);
         TextView groupName = findViewById(R.id.groupNameGrantAuthActivity);
         groupName.setText(getIntent().getStringExtra("groupname"));
+        try {
+            Constants.init(this);
+        } catch (IOException | KeyManagementException | KeyStoreException | JSchException | NoSuchAlgorithmException | CertificateException e) {
+            e.printStackTrace();
+        }
     }
 
     public void GrantAccess(View view) {
