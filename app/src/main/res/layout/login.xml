@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
 
-    tools:context="com.themonster.segaclient.LoginActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+
+
+        <TextView
+            android:id="@+id/CreateUserHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Existing User"
+            android:textColor="@android:color/black"
+            android:textSize="24sp" />
+
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -51,18 +65,27 @@
             android:indeterminateDrawable="@drawable/phantom_spinner"
             android:layout_gravity="center_horizontal"
             android:visibility="invisible" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="right"
+        android:orientation="horizontal">
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
             app:backgroundTint="@color/yellowish"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="2dp"
             android:layout_gravity="bottom|right"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="11dp"
             app:srcCompat="@drawable/phantom_button"
             />
 
     </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
