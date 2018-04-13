@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -105,7 +106,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         super.onActivityCreated(savedInstanceState);
         if (getView() != null) {
             super.onActivityCreated(savedInstanceState);
-            mRecyclerView = getActivity().findViewById(R.id.files_recycler_view);
+            mRecyclerView = getView().findViewById(R.id.files_recycler_view);
             mRecyclerView.setHasFixedSize(false);
             mLayoutManager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(mLayoutManager);
@@ -113,15 +114,24 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             mAdapter = new FilesAdapter(fileList);
             mRecyclerView.setAdapter(mAdapter);
 
-          /*  mSwipeRefreshLayout = getActivity().findViewById(R.id.files_swipe_container);
+        /*    mSwipeRefreshLayout = getView().findViewById(R.id.files_swipe_container);
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
 
-                    refresh();
+                    refreshFileList();
                 }
             });
 */
+
+            FloatingActionButton fab = getView().findViewById(R.id.upload_file_button_browser_fragment);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    uploadFile();
+                }
+            });
             mAdapter.setOnItemClickListener(new FilesAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(final int position) {
@@ -251,8 +261,8 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     @Override
     public void refreshFileList() {
         GetFilesForGroupRequest request = new GetFilesForGroupRequest();
-        request.setGroupname(groupname);
-        request.setUsername(username);
+        request.setGroupname(getArguments().getString(ARG_GROUPNAME));
+        request.setUsername(getArguments().getString(ARG_USERNAME));
         request.setFirebaseToken(Constants.getFirebaseToken(getContext()));
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
