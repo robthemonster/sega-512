@@ -47,7 +47,13 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
     public void onBindViewHolder(FilesAdapter.FilesViewHolder holder, int position) {
         FileAttributes currItem = files.get(position);
         holder.mTextView.setText(currItem.getFileName());
-        holder.cv.setBackgroundResource(R.drawable.red_card);
+
+        if (currItem.getFileType().equalsIgnoreCase("jpg")) {
+            holder.cv.setBackgroundResource(R.drawable.jpg_card);
+        } else if (currItem.getFileType().equalsIgnoreCase("pdf")) {
+            holder.cv.setBackgroundResource(R.drawable.pdf_card);
+        }
+
 
     }
 

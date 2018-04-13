@@ -113,15 +113,15 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             mAdapter = new FilesAdapter(fileList);
             mRecyclerView.setAdapter(mAdapter);
 
-        /*    mSwipeRefreshLayout = getView().findViewById(R.id.files_swipe_container);
+            mSwipeRefreshLayout = getView().findViewById(R.id.files_swipe_container);
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-
                     refreshFileList();
+
                 }
             });
-*/
+
 
             FloatingActionButton fab = getView().findViewById(R.id.upload_file_button_browser_fragment);
             fab.setOnClickListener(new View.OnClickListener() {
@@ -196,8 +196,9 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                     fileList.addAll(response.getFiles());
                     //((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
                     mAdapter.notifyDataSetChanged();
-                    //mSwipeRefreshLayout.setRefreshing(false);
-
+                    if (mSwipeRefreshLayout != null) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
                 }
             }, intentFilter);
             refreshFileList();
