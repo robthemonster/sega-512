@@ -71,7 +71,7 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab2 = findViewById(R.id.fab2_0);
+        FloatingActionButton fab2 = findViewById(R.id.createGroupFab);
         fab2.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
             // trying to figure out the database and new ROOM environment
             @Override

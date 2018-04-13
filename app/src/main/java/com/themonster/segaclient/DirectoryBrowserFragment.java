@@ -9,9 +9,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,6 +40,10 @@ import SEGAMessages.DeleteFileFromGroupResponse;
 import SEGAMessages.FileAttributes;
 import SEGAMessages.GetFilesForGroupRequest;
 import SEGAMessages.GetFilesForGroupResponse;
+import SEGAMessages.RequestAuthorizationFromGroupRequest;
+import SEGAMessages.RequestAuthorizationFromGroupResponse;
+import SEGAMessages.ValidateTokenRequest;
+import SEGAMessages.ValidateTokenResponse;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -123,12 +129,18 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             });
 
 
-            FloatingActionButton fab = getView().findViewById(R.id.upload_file_button_browser_fragment);
-            fab.setOnClickListener(new View.OnClickListener() {
+            FloatingActionButton uploadFab = getView().findViewById(R.id.upload_file_button_browser_fragment);
+            uploadFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     uploadFile();
+                }
+            });
+            FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
+            requestAccessFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RequestAccess();
                 }
             });
             mAdapter.setOnItemClickListener(new FilesAdapter.OnItemClickListener() {
@@ -163,6 +175,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                             DeleteFileFromGroupRequest request = new DeleteFileFromGroupRequest();
                             request.setFilename(fileAttributes.getFileName());
                             request.setGroupname(groupname);
+                            request.setToken(token);
                             request.setUsername(username);
                             request.setFirebaseToken(Constants.getFirebaseToken(getContext()));
                             SendRequestToServerTask task = new SendRequestToServerTask(request);
@@ -291,6 +304,76 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         }
     }
 
+    public void RequestAccess() {
+        RequestAuthorizationFromGroupRequest request = new RequestAuthorizationFromGroupRequest();
+        request.setGroupName(groupname);
+        request.setUsername(username);
+        request.setFirebaseToken(Constants.getFirebaseToken(getContext().getApplicationContext()));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(RequestAuthorizationFromGroupResponse.TYPE);
+        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                RequestAuthorizationFromGroupResponse response = (RequestAuthorizationFromGroupResponse) intent.getSerializableExtra("response");
+                if (response.isSucceeded()) {
+                    token = response.getToken();
+                    enterElevatedAccess();
+                } else {
+                    Toast.makeText(getContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, intentFilter);
+        SendRequestToServerTask task = new SendRequestToServerTask(request);
+        task.execute();
+    }
+
+    private void enterElevatedAccess() {
+        FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
+        requestAccessFab.setColorFilter(Color.BLUE);
+        requestAccessFab.setEnabled(false);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ValidateTokenResponse.TYPE);
+
+        final CountDownTimer accessTimer = new CountDownTimer(70000, 5000) {
+            @Override
+            public void onTick(long timeRemaining) {
+                if (token != null) {
+                    ValidateTokenRequest request = new ValidateTokenRequest();
+                    request.setGroupname(groupname);
+                    request.setToken(token);
+                    request.setFirebaseToken(Constants.getFirebaseToken(getContext().getApplicationContext()));
+                    SendRequestToServerTask task = new SendRequestToServerTask(request);
+                    task.execute();
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                token = null;
+                exitElevatedAccess();
+            }
+        };
+        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                ValidateTokenResponse response = (ValidateTokenResponse) intent.getSerializableExtra("response");
+                if (!response.isTokenIsValid()) {
+                    token = null;
+                    accessTimer.cancel();
+                    accessTimer.onFinish();
+                }
+            }
+        }, intentFilter);
+        accessTimer.start();
+        Toast.makeText(getContext(), "Authorization granted.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void exitElevatedAccess() {
+        FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
+        requestAccessFab.setColorFilter(Color.GRAY);
+        requestAccessFab.setEnabled(true);
+        Toast.makeText(getContext(), "Authorization expired.", Toast.LENGTH_SHORT).show();
+    }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

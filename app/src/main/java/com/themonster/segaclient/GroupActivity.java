@@ -26,8 +26,6 @@ import SEGAMessages.DeleteUserFromGroupRequest;
 import SEGAMessages.DeleteUserFromGroupResponse;
 import SEGAMessages.GetUsersForGroupRequest;
 import SEGAMessages.GetUsersForGroupResponse;
-import SEGAMessages.RequestAuthorizationFromGroupRequest;
-import SEGAMessages.RequestAuthorizationFromGroupResponse;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -171,31 +169,11 @@ public class GroupActivity extends AppCompatActivity {
         task.execute();
     }
 
-    public void RequestAccess(View view) {
-        final RequestAuthorizationFromGroupRequest request = new RequestAuthorizationFromGroupRequest();
-        request.setGroupName(getIntent().getStringExtra(Constants.GROUPNAME_EXTRA));
-        request.setUsername(getIntent().getStringExtra(Constants.USERNAME_EXTRA));
-        request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
-        SendRequestToServerTask task = new SendRequestToServerTask(request);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(RequestAuthorizationFromGroupResponse.TYPE);
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                RequestAuthorizationFromGroupResponse response = (RequestAuthorizationFromGroupResponse) intent.getSerializableExtra("response");
-                if (response.isSucceeded()) {
-                    Toast.makeText(getApplicationContext(), request.getGroupName() + " authorized your request!", Toast.LENGTH_SHORT).show();
-                    Intent launchBrowser = new Intent(getIntent());
-                    Log.d("test", launchBrowser.getExtras().getString(Constants.GROUPNAME_EXTRA) == getIntent().getExtras().getString(Constants.GROUPNAME_EXTRA) ? "yes" : "no");
-                    launchBrowser.putExtra("token", response.getToken());
-                    launchBrowser.setClass(getApplicationContext(), DirectoryBrowserActivity.class);
-                    startActivity(launchBrowser);
-                } else {
-                    Toast.makeText(getApplicationContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, intentFilter);
-        task.execute();
+    public void LaunchDirectoryActivity(View view) {
+        Intent launchBrowser = new Intent(getIntent());
+        Log.d("test", launchBrowser.getExtras().getString(Constants.GROUPNAME_EXTRA) == getIntent().getExtras().getString(Constants.GROUPNAME_EXTRA) ? "yes" : "no");
+        launchBrowser.setClass(getApplicationContext(), DirectoryBrowserActivity.class);
+        startActivity(launchBrowser);
     }
 
     public void AddUserToGroup(View view) {
