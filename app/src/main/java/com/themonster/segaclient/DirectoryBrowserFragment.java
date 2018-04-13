@@ -81,7 +81,6 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             groupname = getArguments().getString(ARG_GROUPNAME);
             username = getArguments().getString(ARG_USERNAME);
             token = getArguments().getString(ARG_TOKEN);
-            refreshFileList();
         }
 
 
@@ -201,6 +200,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
 
                 }
             }, intentFilter);
+            refreshFileList();
         }
     }
 
@@ -255,7 +255,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
 
     @Override
     public void downloadCompleted(String location) {
-        Toast.makeText(getContext(), "File downloaded to " + location, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), location == null ? "Access denied" : "File downloaded to " + location, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -272,8 +272,8 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         Log.d("test", "test");
     }
     @Override
-    public void announceUploadCompleted() {
-        Toast.makeText(getContext(), "Upload complete!", Toast.LENGTH_SHORT).show();
+    public void announceUploadResult(Boolean successful) {
+        Toast.makeText(getContext(), successful ? "Upload complete!" : "Upload failed. Access denied.", Toast.LENGTH_SHORT).show();
     }
 
     @Override

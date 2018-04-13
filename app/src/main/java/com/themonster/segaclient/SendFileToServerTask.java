@@ -17,7 +17,7 @@ import java.io.IOException;
  * Created by The Monster on 3/25/2018.
  */
 
-public class SendFileToServerTask extends AsyncTask<String, Void, Void> {
+public class SendFileToServerTask extends AsyncTask<String, Void, Boolean> {
     private SendFileToServerCallBack callBack;
 
     public SendFileToServerTask(SendFileToServerCallBack callBack) {
@@ -25,7 +25,7 @@ public class SendFileToServerTask extends AsyncTask<String, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(String... strings) {
+    protected Boolean doInBackground(String... strings) {
         String groupname = strings[0];
         String token = strings[1];
         File file = new File(strings[2]);
@@ -44,10 +44,11 @@ public class SendFileToServerTask extends AsyncTask<String, Void, Void> {
             sftp.put(new FileInputStream(file), file.getName());
             sftp.exit();
             session.disconnect();
+            return true;
         } catch (JSchException | SftpException | IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return false;
     }
 
     @Override
@@ -56,15 +57,15 @@ public class SendFileToServerTask extends AsyncTask<String, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
+    protected void onPostExecute(Boolean aBoolean) {
+        super.onPostExecute(aBoolean);
         callBack.refreshFileList();
-        callBack.announceUploadCompleted();
+        callBack.announceUploadResult(aBoolean);
     }
 
     public interface SendFileToServerCallBack {
         void refreshFileList();
 
-        void announceUploadCompleted();
+        void announceUploadResult(Boolean aBoolean);
     }
 }
