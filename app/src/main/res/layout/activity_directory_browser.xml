@@ -6,7 +6,7 @@
     tools:context="com.themonster.segaclient.DirectoryBrowserActivity"
     >
 
-    <fragment
+    <FrameLayout
         android:id="@+id/directoryBrowserFragment"
         android:name="com.themonster.segaclient.DirectoryBrowserFragment"
         android:layout_width="match_parent"
