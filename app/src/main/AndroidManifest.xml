@@ -38,10 +38,8 @@
             android:name=".CreateUserActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.FullScreen" />
-        <activity android:name=".DashboardActivity" />
+
         <activity android:name=".GroupActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".GroupActivity2"
             android:screenOrientation="portrait"/>
         <activity android:name=".CreateGroupActivity"
             android:screenOrientation="portrait"/>
@@ -60,7 +58,8 @@
         </activity>
         <activity android:name=".DirectoryBrowserActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".DashboardActivity2"
+        <activity
+            android:name=".DashboardActivity"
             android:screenOrientation="portrait"/>
 
     </application>

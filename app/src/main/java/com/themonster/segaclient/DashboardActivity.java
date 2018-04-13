@@ -6,87 +6,72 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import SEGAMessages.GetGroupsForUserRequest;
 import SEGAMessages.GetGroupsForUserResponse;
 
-@Deprecated
 public class DashboardActivity extends AppCompatActivity {
 
+    TextView nameTV;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    Toast toast;
     private AlertDialog mDialog;
-
     private ArrayList<String> groups = new ArrayList<>();
+    private RecyclerView mRecyclerView;
+    private GroupsAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        final String username = getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "");
-        ((TextView) findViewById(R.id.usernameDashboard)).setText(username);
-        final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
-        request.setUsername(username);
-        request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
-        SendRequestToServerTask task = new SendRequestToServerTask(request);
-        task.execute();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GetGroupsForUserResponse.TYPE);
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
+        //nameTV = (TextView)findViewById(R.id.cv_username);
+        setTitle(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "") + "'s groups");
+        //nameTV.setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, "") + "'s groups");
+        mRecyclerView = findViewById(R.id.AD_recycler_view);
+        mRecyclerView.setHasFixedSize(false);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mAdapter = new GroupsAdapter(groups);
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(new GroupsAdapter.OnItemClickListener() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                GetGroupsForUserResponse response = (GetGroupsForUserResponse) intent.getSerializableExtra("response");
-                groups.clear();
-                groups.addAll(response.getGroups());
-                ListView groupList = findViewById(R.id.groupListDashboard);
-                if (groupList.getAdapter() instanceof ArrayAdapter) {
-                    ArrayAdapter adapter = (ArrayAdapter) groupList.getAdapter();
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        }, intentFilter);
-
-        ListView listView = findViewById(R.id.groupListDashboard);
-
-        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.group_list_item, groups) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                String item = getItem(position);
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.group_list_item, parent, false);
-                }
-                TextView groupNameTextView = convertView.findViewById(R.id.groupNameListItem);
-
-                groupNameTextView.setText(item);
-                return convertView;
-            }
-        });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String groupSelected = adapterView.getItemAtPosition(i).toString();
+            public void onItemClick(int position) {
+                Log.d("Position : " + position + " clicked.", "ya");
+                String groupSelected = groups.get(position);
                 Intent intent = new Intent(DashboardActivity.this, GroupActivity.class);
-                intent.putExtra(Constants.USERNAME_EXTRA, username);
+                intent.putExtra(Constants.USERNAME_EXTRA, getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
                 intent.putExtra(Constants.GROUPNAME_EXTRA, groupSelected);
                 startActivity(intent);
             }
         });
-        FloatingActionButton fab2 = findViewById(R.id.fab2);
+
+        mSwipeRefreshLayout = findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // cancel the Visual indication of a refresh
+                refresh();
+            }
+        });
+
+        FloatingActionButton fab2 = findViewById(R.id.fab2_0);
         fab2.setOnClickListener(new View.OnClickListener() { // This will send the program into an XML file that I will use for testing and
             // trying to figure out the database and new ROOM environment
             @Override
@@ -97,21 +82,35 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        FloatingActionButton refresh = findViewById(R.id.refreshGroupsDashboardFab);
-        refresh.setOnClickListener(new View.OnClickListener() {
+        /*
+        final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
+        request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
+        SendRequestToServerTask task = new SendRequestToServerTask(request);
+        task.execute();
+        */
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GetGroupsForUserResponse.TYPE);
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(new BroadcastReceiver() {
             @Override
-            public void onClick(View view) {
-                SendRequestToServerTask task = new SendRequestToServerTask(request);
-                task.execute();
+            public void onReceive(Context context, Intent intent) {
+                GetGroupsForUserResponse response = (GetGroupsForUserResponse) intent.getSerializableExtra("response");
+                groups.clear();
+                groups.addAll(response.getGroups());
+                mAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
-        });
+        }, intentFilter);
     }
 
-    @Override
     protected void onResume() {
         super.onResume();
-        ((TextView) findViewById(R.id.usernameDashboard)).setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
-        Log.d("DashBoardActivity", "onresumecalled " + getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        // ((TextView) findViewById(R.id.usernameDashboard)).setText(getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        Log.d("DashBoardActivity2", "onresumecalled " + getSharedPreferences("userCredentials", MODE_PRIVATE).getString(Constants.USERNAME_EXTRA, ""));
+        refresh();
+    }
+
+    void refresh() {
         final GetGroupsForUserRequest request = new GetGroupsForUserRequest();
         request.setUsername(getSharedPreferences("userCredentials", MODE_PRIVATE).getString("username", ""));
         request.setFirebaseToken(getSharedPreferences("firebaseToken", MODE_PRIVATE).getString("token", ""));
@@ -120,6 +119,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     public void onBackPressed() {
+
         if (mDialog == null) // https://stackoverflow.com/questions/14910602/how-to-use-alertdialog
         {
             mDialog = new AlertDialog.Builder(this)
@@ -131,7 +131,7 @@ public class DashboardActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Log.i("MyTag", "Click YES");
-                                    //TODO rob here is where to clear out stuffs
+                                    //TODO rob here is where to clear out stuffs in the DB
                                     Intent i = new Intent(DashboardActivity.this, LoginActivity.class);
                                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(i);

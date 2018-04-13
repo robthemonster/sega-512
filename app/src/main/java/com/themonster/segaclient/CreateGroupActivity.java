@@ -76,7 +76,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                     if (response.isSucceeded()) {
                         Toast.makeText(CreateGroupActivity.this, "Group " + et.getText().toString() + " created.", Toast.LENGTH_SHORT).show();
                         findViewById(R.id.create_group_groupname).setEnabled(true);
-                        Intent i = new Intent(CreateGroupActivity.this, DashboardActivity2.class);
+                        Intent i = new Intent(CreateGroupActivity.this, DashboardActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(i);
                     } else {
