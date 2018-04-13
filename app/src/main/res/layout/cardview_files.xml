@@ -22,7 +22,8 @@
             android:layout_height="70dp"
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@+id/file_download_button"
-            android:background="@android:drawable/ic_delete" />
+            android:background="@android:drawable/ic_delete"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/cv_file_name"
@@ -44,7 +45,8 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:background="@android:drawable/ic_input_add"
-            android:gravity="end" />
+            android:gravity="end"
+            android:visibility="invisible" />
 
 
     </RelativeLayout>
