@@ -23,6 +23,15 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
     private OnItemClickListener mListener;
     private OnItemLongClickListener mLCListener;
 
+    private boolean itemsLocked = true;
+
+    public boolean isItemsLocked() {
+        return itemsLocked;
+    }
+
+    public void setItemsLocked(boolean itemsLocked) {
+        this.itemsLocked = itemsLocked;
+    }
     public FilesAdapter(ArrayList<FileAttributes> files) {
         this.files = files;
     }
@@ -49,12 +58,10 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
         holder.mTextView.setText(currItem.getFileName());
         holder.type = new String(currItem.getFileType());
         if (currItem.getFileType().equalsIgnoreCase("jpg")) {
-            holder.cv.setBackgroundResource(R.drawable.locked_jpg_card);
+            holder.cv.setBackgroundResource(itemsLocked ? R.drawable.locked_jpg_card : R.drawable.jpg_card);
         } else if (currItem.getFileType().equalsIgnoreCase("pdf")) {
-            holder.cv.setBackgroundResource(R.drawable.locked_pdf_card);
+            holder.cv.setBackgroundResource(itemsLocked ? R.drawable.locked_pdf_card : R.drawable.pdf_card);
         }
-
-
     }
 
     @Override

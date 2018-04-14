@@ -64,6 +64,8 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<FileAttributes> fileList = new ArrayList<>();
     private OnFragmentInteractionListener mListener;
+    private CountDownTimer accessTimer;
+
     public DirectoryBrowserFragment() {
         // Required empty public constructor
     }
@@ -328,6 +330,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                 if (response.isSucceeded()) {
                     token = response.getToken();
                     enterElevatedAccess();
+                    refreshFileList();
                 } else {
                     Toast.makeText(getContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -347,15 +350,8 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         requestAccessFab.setEnabled(false);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ValidateTokenResponse.TYPE);
-        for (int currChild = 0; currChild < mRecyclerView.getChildCount(); currChild++) {
-            FilesAdapter.FilesViewHolder child = (FilesAdapter.FilesViewHolder) mRecyclerView.findViewHolderForAdapterPosition(currChild);
-            if (child.type.equalsIgnoreCase("jpg")) {
-                child.cv.setBackgroundResource(R.drawable.jpg_card);
-            } else {
-                child.cv.setBackgroundResource(R.drawable.pdf_card);
-            }
-        }
-        final CountDownTimer accessTimer = new CountDownTimer(70000, 5000) {
+        ((FilesAdapter) mRecyclerView.getAdapter()).setItemsLocked(false);
+        accessTimer = new CountDownTimer(70000, 5000) {
             @Override
             public void onTick(long timeRemaining) {
                 if (token != null) {
@@ -392,15 +388,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     private void exitElevatedAccess() {
         FloatingActionButton uploadFab = getView().findViewById(R.id.upload_file_button_browser_fragment);
         uploadFab.setEnabled(false);
-        for (int currChild = 0; currChild < mRecyclerView.getChildCount(); currChild++) {
-            authorized = false;
-            FilesAdapter.FilesViewHolder child = (FilesAdapter.FilesViewHolder) mRecyclerView.findViewHolderForAdapterPosition(currChild);
-            if (child.type.equalsIgnoreCase("jpg")) {
-                child.cv.setBackgroundResource(R.drawable.locked_jpg_card);
-            } else {
-                child.cv.setBackgroundResource(R.drawable.locked_pdf_card);
-            }
-        }
+        ((FilesAdapter) mRecyclerView.getAdapter()).setItemsLocked(true);
 
         FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
         requestAccessFab.setColorFilter(Color.GRAY);
@@ -413,6 +401,9 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     public void onDestroy() {
         super.onDestroy();
         authorized = false;
+        if (accessTimer != null) {
+            accessTimer.cancel();
+        }
     }
 
     public interface OnFragmentInteractionListener {
