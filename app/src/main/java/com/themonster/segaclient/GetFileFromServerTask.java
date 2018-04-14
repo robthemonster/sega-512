@@ -68,7 +68,6 @@ public class GetFileFromServerTask extends AsyncTask<String, Float, Void> {
         }
         super.onPostExecute(aVoid);
     }
-
     public interface GetFileFromServerCallBack {
         void refreshFileList();
 

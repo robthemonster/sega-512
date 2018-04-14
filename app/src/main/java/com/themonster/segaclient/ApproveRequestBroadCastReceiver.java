@@ -30,7 +30,7 @@ public class ApproveRequestBroadCastReceiver extends BroadcastReceiver {
         final GrantAuthorizationForGroupRequest request = new GrantAuthorizationForGroupRequest();
         request.setGroupName(intent.getStringExtra(Constants.GROUPNAME_EXTRA));
         request.setUsername(intent.getStringExtra(Constants.USERNAME_EXTRA));
-        request.setFirebaseToken(Constants.getFirebaseToken(context));
+        request.setFirebaseToken(Constants.getFirebaseToken(context.getApplicationContext()));
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GrantAuthorizationForGroupResponse.TYPE);

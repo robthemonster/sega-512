@@ -193,7 +193,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                             request.setGroupname(groupname);
                             request.setToken(token);
                             request.setUsername(username);
-                            request.setFirebaseToken(Constants.getFirebaseToken(getContext()));
+                            request.setFirebaseToken(Constants.getFirebaseToken(getContext().getApplicationContext()));
                             SendRequestToServerTask task = new SendRequestToServerTask(request);
                             task.execute();
                         }
@@ -297,7 +297,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         GetFilesForGroupRequest request = new GetFilesForGroupRequest();
         request.setGroupname(getArguments().getString(ARG_GROUPNAME));
         request.setUsername(getArguments().getString(ARG_USERNAME));
-        request.setFirebaseToken(Constants.getFirebaseToken(getContext()));
+        request.setFirebaseToken(Constants.getFirebaseToken(getContext().getApplicationContext()));
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
