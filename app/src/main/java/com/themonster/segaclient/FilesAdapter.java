@@ -47,11 +47,11 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
     public void onBindViewHolder(FilesAdapter.FilesViewHolder holder, int position) {
         FileAttributes currItem = files.get(position);
         holder.mTextView.setText(currItem.getFileName());
-
+        holder.type = new String(currItem.getFileType());
         if (currItem.getFileType().equalsIgnoreCase("jpg")) {
-            holder.cv.setBackgroundResource(R.drawable.jpg_card);
+            holder.cv.setBackgroundResource(R.drawable.locked_jpg_card);
         } else if (currItem.getFileType().equalsIgnoreCase("pdf")) {
-            holder.cv.setBackgroundResource(R.drawable.pdf_card);
+            holder.cv.setBackgroundResource(R.drawable.locked_pdf_card);
         }
 
 
@@ -77,12 +77,14 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
 
         public CardView cv;
         public TextView mTextView;
+        public String type;
         //public ImageView mImageView;
 
         public FilesViewHolder(View itemView, final OnItemClickListener listener, final OnItemLongClickListener LListener) {
             super(itemView);
             mTextView = itemView.findViewById(R.id.cv_file_name);
             cv = itemView.findViewById(R.id.cv_files);
+
             // mImageView = itemView.findViewById(R.id.cv_img);
             itemView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {

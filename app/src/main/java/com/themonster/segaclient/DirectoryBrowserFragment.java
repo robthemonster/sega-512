@@ -54,6 +54,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     private static final String ARG_TOKEN = "token";
     android.support.v7.app.AlertDialog.Builder builder;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    boolean authorized = false;
     private String groupname;
     private String username;
     private String token;
@@ -61,11 +62,8 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     private RecyclerView mRecyclerView;
     private FilesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
     private ArrayList<FileAttributes> fileList = new ArrayList<>();
-
     private OnFragmentInteractionListener mListener;
-
     public DirectoryBrowserFragment() {
         // Required empty public constructor
     }
@@ -146,6 +144,10 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             mAdapter.setOnItemClickListener(new FilesAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(final int position) {
+                    if (!authorized) {
+                        Toast.makeText(getContext(), "Authorization Required. Click on the Lock", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     final FileAttributes fileAttributes = fileList.get(position);
 
 
@@ -192,8 +194,11 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             mAdapter.setOnItemLongClickListener(new FilesAdapter.OnItemLongClickListener() {
                 @Override
                 public boolean onLongClick(int position) {
+                    if (!authorized) {
+                        return true;
+                    }
                     Toast.makeText(DirectoryBrowserFragment.super.getActivity().getApplicationContext(), "Will Implement Soon TM", Toast.LENGTH_SHORT).show();
-                    return false;
+                    return true;
                 }
             });
             IntentFilter intentFilter = new IntentFilter();
@@ -329,11 +334,19 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
 
     private void enterElevatedAccess() {
         FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
+        authorized = true;
         requestAccessFab.setColorFilter(Color.BLUE);
         requestAccessFab.setEnabled(false);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ValidateTokenResponse.TYPE);
-
+        for (int currChild = 0; currChild < mRecyclerView.getChildCount(); currChild++) {
+            FilesAdapter.FilesViewHolder child = (FilesAdapter.FilesViewHolder) mRecyclerView.findViewHolderForAdapterPosition(currChild);
+            if (child.type.equalsIgnoreCase("jpg")) {
+                child.cv.setBackgroundResource(R.drawable.jpg_card);
+            } else {
+                child.cv.setBackgroundResource(R.drawable.pdf_card);
+            }
+        }
         final CountDownTimer accessTimer = new CountDownTimer(70000, 5000) {
             @Override
             public void onTick(long timeRemaining) {
@@ -369,11 +382,28 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     }
 
     private void exitElevatedAccess() {
+        for (int currChild = 0; currChild < mRecyclerView.getChildCount(); currChild++) {
+            authorized = false;
+            FilesAdapter.FilesViewHolder child = (FilesAdapter.FilesViewHolder) mRecyclerView.findViewHolderForAdapterPosition(currChild);
+            if (child.type.equalsIgnoreCase("jpg")) {
+                child.cv.setBackgroundResource(R.drawable.locked_jpg_card);
+            } else {
+                child.cv.setBackgroundResource(R.drawable.locked_pdf_card);
+            }
+        }
+
         FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
         requestAccessFab.setColorFilter(Color.GRAY);
         requestAccessFab.setEnabled(true);
         Toast.makeText(getContext(), "Authorization expired.", Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        authorized = false;
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
