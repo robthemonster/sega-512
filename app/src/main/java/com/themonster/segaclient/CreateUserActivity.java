@@ -41,6 +41,7 @@ public class CreateUserActivity extends AppCompatActivity {
     int size;
     BroadcastReceiver broadcastReceiver;
     CountDownTimer countDownTimer;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         dialog = new ProgressDialog(CreateUserActivity.this);

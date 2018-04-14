@@ -3,7 +3,6 @@ package com.themonster.segaclient;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 public class DirectoryBrowserActivity extends AppCompatActivity implements DirectoryBrowserFragment.OnFragmentInteractionListener {
     DirectoryBrowserFragment fragment;
@@ -27,11 +26,8 @@ public class DirectoryBrowserActivity extends AppCompatActivity implements Direc
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         getFragmentManager().beginTransaction().remove(fragment).commit();
+        super.onBackPressed();
     }
 
-    public void UploadFile(View view) {
-        fragment.uploadFile();
-    }
 }

@@ -17,6 +17,7 @@ class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapter.Group
     private ArrayList<String> strings;
     private GroupMembersAdapter.OnItemClickListener mListener;
     private GroupMembersAdapter.OnItemLongClickListener mLCListener;
+
     public GroupMembersAdapter(ArrayList<String> strs) {
         strings = strs;
     }
@@ -28,7 +29,6 @@ class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapter.Group
     public void setOnItemLongClickListener(OnItemLongClickListener listener) {
         mLCListener = listener;
     }
-
 
 
     @Override

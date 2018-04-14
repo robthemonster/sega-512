@@ -58,6 +58,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     private String groupname;
     private String username;
     private String token;
+    private boolean alive = true;
     private int selectedIndex = -1;
     private RecyclerView mRecyclerView;
     private FilesAdapter mAdapter;
@@ -78,6 +79,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             }
         }
     };
+
     public DirectoryBrowserFragment() {
         // Required empty public constructor
     }
@@ -286,6 +288,11 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     }
 
     @Override
+    public boolean isAlive() {
+        return alive;
+    }
+
+    @Override
     public void refreshFileList() {
         GetFilesForGroupRequest request = new GetFilesForGroupRequest();
         request.setGroupname(getArguments().getString(ARG_GROUPNAME));
@@ -298,6 +305,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     void refresh() {
         Log.d("test", "test");
     }
+
     @Override
     public void announceUploadResult(Boolean successful) {
         Toast.makeText(getContext(), successful ? "Upload complete!" : "Upload failed. Access denied.", Toast.LENGTH_SHORT).show();
@@ -376,15 +384,17 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     }
 
     private void exitElevatedAccess() {
-        FloatingActionButton uploadFab = getView().findViewById(R.id.upload_file_button_browser_fragment);
-        uploadFab.setEnabled(false);
-        ((FilesAdapter) mRecyclerView.getAdapter()).setItemsLocked(true);
+        if (getView() != null) {
+            FloatingActionButton uploadFab = getView().findViewById(R.id.upload_file_button_browser_fragment);
+            uploadFab.setEnabled(false);
+            ((FilesAdapter) mRecyclerView.getAdapter()).setItemsLocked(true);
 
-        FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
-        requestAccessFab.setColorFilter(Color.GRAY);
-        requestAccessFab.setEnabled(true);
-        uploadFab.setColorFilter(Color.GRAY);
-        Toast.makeText(getContext(), "Authorization expired.", Toast.LENGTH_SHORT).show();
+            FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
+            requestAccessFab.setColorFilter(Color.GRAY);
+            requestAccessFab.setEnabled(true);
+            uploadFab.setColorFilter(Color.GRAY);
+            Toast.makeText(getContext(), "Authorization expired.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -395,17 +405,18 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
 
     @Override
     public void onPause() {
-        authorized = false;
-        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).unregisterReceiver(authReceiver);
-        if (accessTimer != null) {
-            accessTimer.cancel();
-            accessTimer.onFinish();
-        }
+
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
+        authorized = false;
+        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).unregisterReceiver(authReceiver);
+        if (accessTimer != null) {
+            accessTimer.cancel();
+        }
+        alive = false;
         super.onDestroy();
     }
 

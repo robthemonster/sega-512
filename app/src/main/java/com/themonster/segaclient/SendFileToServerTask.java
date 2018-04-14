@@ -59,11 +59,15 @@ public class SendFileToServerTask extends AsyncTask<String, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
-        callBack.refreshFileList();
-        callBack.announceUploadResult(aBoolean);
+        if (callBack != null && callBack.isAlive()) {
+            callBack.refreshFileList();
+            callBack.announceUploadResult(aBoolean);
+        }
     }
 
     public interface SendFileToServerCallBack {
+        boolean isAlive();
+
         void refreshFileList();
 
         void announceUploadResult(Boolean aBoolean);

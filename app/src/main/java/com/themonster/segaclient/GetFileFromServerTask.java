@@ -63,13 +63,16 @@ public class GetFileFromServerTask extends AsyncTask<String, Float, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        if (callBack != null && callBack.isAlive()) {
+            callBack.downloadCompleted(downloadLocation);
+        }
         super.onPostExecute(aVoid);
-        callBack.downloadCompleted(downloadLocation);
     }
 
     public interface GetFileFromServerCallBack {
         void refreshFileList();
 
+        boolean isAlive();
         void downloadCompleted(String location);
     }
 }

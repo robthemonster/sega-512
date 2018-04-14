@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     int size;
     BroadcastReceiver broadcastReceiver;
     CountDownTimer countDownTimer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {

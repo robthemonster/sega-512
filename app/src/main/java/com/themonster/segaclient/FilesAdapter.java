@@ -25,15 +25,16 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FilesViewHol
 
     private boolean itemsLocked = true;
 
+    public FilesAdapter(ArrayList<FileAttributes> files) {
+        this.files = files;
+    }
+
     public boolean isItemsLocked() {
         return itemsLocked;
     }
 
     public void setItemsLocked(boolean itemsLocked) {
         this.itemsLocked = itemsLocked;
-    }
-    public FilesAdapter(ArrayList<FileAttributes> files) {
-        this.files = files;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
