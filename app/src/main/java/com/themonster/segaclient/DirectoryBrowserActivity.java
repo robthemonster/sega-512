@@ -25,6 +25,12 @@ public class DirectoryBrowserActivity extends AppCompatActivity implements Direc
         //what
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        getFragmentManager().beginTransaction().remove(fragment).commit();
+    }
+
     public void UploadFile(View view) {
         fragment.uploadFile();
     }

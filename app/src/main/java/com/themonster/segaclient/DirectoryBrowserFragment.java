@@ -65,7 +65,19 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     private ArrayList<FileAttributes> fileList = new ArrayList<>();
     private OnFragmentInteractionListener mListener;
     private CountDownTimer accessTimer;
-
+    private BroadcastReceiver authReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            RequestAuthorizationFromGroupResponse response = (RequestAuthorizationFromGroupResponse) intent.getSerializableExtra("response");
+            if (response.isSucceeded()) {
+                token = response.getToken();
+                enterElevatedAccess();
+                refreshFileList();
+            } else {
+                Toast.makeText(getContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
     public DirectoryBrowserFragment() {
         // Required empty public constructor
     }
@@ -312,19 +324,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         request.setFirebaseToken(Constants.getFirebaseToken(getContext().getApplicationContext()));
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(RequestAuthorizationFromGroupResponse.TYPE);
-        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                RequestAuthorizationFromGroupResponse response = (RequestAuthorizationFromGroupResponse) intent.getSerializableExtra("response");
-                if (response.isSucceeded()) {
-                    token = response.getToken();
-                    enterElevatedAccess();
-                    refreshFileList();
-                } else {
-                    Toast.makeText(getContext(), response.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, intentFilter);
+        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).registerReceiver(authReceiver, intentFilter);
         SendRequestToServerTask task = new SendRequestToServerTask(request);
         task.execute();
     }
@@ -389,18 +389,24 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
 
     @Override
     public void onResume() {
-        super.onResume();
         refreshFileList();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        authorized = false;
+        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).unregisterReceiver(authReceiver);
+        if (accessTimer != null) {
+            accessTimer.cancel();
+            accessTimer.onFinish();
+        }
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        authorized = false;
-        if (accessTimer != null) {
-            accessTimer.cancel();
-            accessTimer.onFinish();
-        }
     }
 
     public interface OnFragmentInteractionListener {
