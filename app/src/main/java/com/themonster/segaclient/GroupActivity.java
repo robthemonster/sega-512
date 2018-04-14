@@ -68,11 +68,13 @@ public class GroupActivity extends AppCompatActivity {
                 GetUsersForGroupResponse response = (GetUsersForGroupResponse) intent.getSerializableExtra("response");
                 if (response.getUsers() == null) {
                     Log.d("users", "users was null");
+                    finish();
+                } else {
+                    usersInGroup.clear();
+                    usersInGroup.addAll(response.getUsers());
+                    mAdapter.notifyDataSetChanged();
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
-                usersInGroup.clear();
-                usersInGroup.addAll(response.getUsers());
-                mAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
 
             }
         }, intentFilter);

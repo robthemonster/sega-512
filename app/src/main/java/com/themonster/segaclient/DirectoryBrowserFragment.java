@@ -294,16 +294,14 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
 
     @Override
     public void refreshFileList() {
-        GetFilesForGroupRequest request = new GetFilesForGroupRequest();
-        request.setGroupname(getArguments().getString(ARG_GROUPNAME));
-        request.setUsername(getArguments().getString(ARG_USERNAME));
-        request.setFirebaseToken(Constants.getFirebaseToken(getContext().getApplicationContext()));
-        SendRequestToServerTask task = new SendRequestToServerTask(request);
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    void refresh() {
-        Log.d("test", "test");
+        if (getContext() != null) {
+            GetFilesForGroupRequest request = new GetFilesForGroupRequest();
+            request.setGroupname(getArguments().getString(ARG_GROUPNAME));
+            request.setUsername(getArguments().getString(ARG_USERNAME));
+            request.setFirebaseToken(Constants.getFirebaseToken(getContext().getApplicationContext()));
+            SendRequestToServerTask task = new SendRequestToServerTask(request);
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
     @Override
