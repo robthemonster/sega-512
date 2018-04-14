@@ -99,13 +99,6 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         return inflater.inflate(R.layout.fragment_directory_browser, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -252,10 +245,6 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         requestPermissions(permissions, 200);
     }
 
-    public void getFiles() {
-
-    }
-
     @Override
     public void onRequestPermissionsResult(int permsRequestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (permsRequestCode == 200) {
@@ -368,6 +357,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             public void onFinish() {
                 token = null;
                 exitElevatedAccess();
+                refreshFileList();
             }
         };
         LocalBroadcastManager.getInstance(getContext().getApplicationContext()).registerReceiver(new BroadcastReceiver() {
@@ -398,11 +388,18 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        refreshFileList();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         authorized = false;
         if (accessTimer != null) {
             accessTimer.cancel();
+            accessTimer.onFinish();
         }
     }
 
