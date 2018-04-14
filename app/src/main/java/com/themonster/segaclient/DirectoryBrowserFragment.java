@@ -128,10 +128,15 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
 
 
             FloatingActionButton uploadFab = getView().findViewById(R.id.upload_file_button_browser_fragment);
+            uploadFab.setEnabled(false);
             uploadFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    uploadFile();
+                    if (authorized) {
+                        uploadFile();
+                    } else {
+                        Toast.makeText(getContext(), "Authorization Required.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
@@ -333,8 +338,11 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     }
 
     private void enterElevatedAccess() {
+        FloatingActionButton uploadFab = getView().findViewById(R.id.upload_file_button_browser_fragment);
+        uploadFab.setEnabled(true);
         FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
         authorized = true;
+        uploadFab.setColorFilter(Color.BLUE);
         requestAccessFab.setColorFilter(Color.BLUE);
         requestAccessFab.setEnabled(false);
         IntentFilter intentFilter = new IntentFilter();
@@ -382,6 +390,8 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     }
 
     private void exitElevatedAccess() {
+        FloatingActionButton uploadFab = getView().findViewById(R.id.upload_file_button_browser_fragment);
+        uploadFab.setEnabled(false);
         for (int currChild = 0; currChild < mRecyclerView.getChildCount(); currChild++) {
             authorized = false;
             FilesAdapter.FilesViewHolder child = (FilesAdapter.FilesViewHolder) mRecyclerView.findViewHolderForAdapterPosition(currChild);
@@ -395,6 +405,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         FloatingActionButton requestAccessFab = getView().findViewById(R.id.request_access_button_browser_fragment);
         requestAccessFab.setColorFilter(Color.GRAY);
         requestAccessFab.setEnabled(true);
+        uploadFab.setColorFilter(Color.GRAY);
         Toast.makeText(getContext(), "Authorization expired.", Toast.LENGTH_SHORT).show();
     }
 
