@@ -17,6 +17,7 @@ public class DirectoryBrowserActivity extends AppCompatActivity implements Direc
                 getIntent().getStringExtra("token")
         );
         getFragmentManager().beginTransaction().replace(R.id.directoryBrowserFragment, fragment).commit();
+        setTitle(getIntent().getStringExtra(Constants.GROUPNAME_EXTRA) + "'s members");
     }
 
     @Override
