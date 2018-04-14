@@ -79,7 +79,45 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             }
         }
     };
+    private BroadcastReceiver deleteFileReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            DeleteFileFromGroupResponse response = (DeleteFileFromGroupResponse) intent.getSerializableExtra("response");
+            Toast.makeText(getContext(), response.isSucceeded() ? "File deleted" : response.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            if (response.isSucceeded()) {
+                refreshFileList();
+            }
+        }
+    };
 
+    private BroadcastReceiver getFilesReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            GetFilesForGroupResponse response = (GetFilesForGroupResponse) intent.getSerializableExtra("response");
+            if (response.getErrorMessage() != null) {
+                Log.d("getFiles", response.getErrorMessage());
+            }
+            fileList.clear();
+            fileList.addAll(response.getFiles());
+            //((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
+            if (mSwipeRefreshLayout != null) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }
+    };
+
+    private BroadcastReceiver validateTokenReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ValidateTokenResponse response = (ValidateTokenResponse) intent.getSerializableExtra("response");
+            if (!response.isTokenIsValid()) {
+                token = null;
+                accessTimer.cancel();
+                accessTimer.onFinish();
+            }
+        }
+    };
     public DirectoryBrowserFragment() {
         // Required empty public constructor
     }
@@ -118,6 +156,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
         super.onActivityCreated(savedInstanceState);
         if (getView() != null) {
             super.onActivityCreated(savedInstanceState);
+            alive = true;
             mRecyclerView = getView().findViewById(R.id.files_recycler_view);
             mRecyclerView.setHasFixedSize(false);
             mLayoutManager = new LinearLayoutManager(getActivity());
@@ -178,16 +217,8 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                         public void onClick(DialogInterface dialogInterface, int i) {
                             IntentFilter intentFilter = new IntentFilter();
                             intentFilter.addAction(DeleteFileFromGroupResponse.TYPE);
-                            LocalBroadcastManager.getInstance(getContext()).registerReceiver(new BroadcastReceiver() {
-                                @Override
-                                public void onReceive(Context context, Intent intent) {
-                                    DeleteFileFromGroupResponse response = (DeleteFileFromGroupResponse) intent.getSerializableExtra("response");
-                                    Toast.makeText(getContext(), response.isSucceeded() ? "File deleted" : response.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                                    if (response.isSucceeded()) {
-                                        refreshFileList();
-                                    }
-                                }
-                            }, intentFilter);
+
+                            LocalBroadcastManager.getInstance(getContext()).registerReceiver(deleteFileReceiver, intentFilter);
                             DeleteFileFromGroupRequest request = new DeleteFileFromGroupRequest();
                             request.setFilename(fileAttributes.getFileName());
                             request.setGroupname(groupname);
@@ -217,22 +248,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
             });
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(GetFilesForGroupResponse.TYPE);
-            LocalBroadcastManager.getInstance(getContext()).registerReceiver(new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    GetFilesForGroupResponse response = (GetFilesForGroupResponse) intent.getSerializableExtra("response");
-                    if (response.getErrorMessage() != null) {
-                        Log.d("getFiles", response.getErrorMessage());
-                    }
-                    fileList.clear();
-                    fileList.addAll(response.getFiles());
-                    //((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
-                    mAdapter.notifyDataSetChanged();
-                    if (mSwipeRefreshLayout != null) {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                }
-            }, intentFilter);
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(getFilesReceiver, intentFilter);
             refreshFileList();
         }
     }
@@ -366,17 +382,7 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
                 refreshFileList();
             }
         };
-        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                ValidateTokenResponse response = (ValidateTokenResponse) intent.getSerializableExtra("response");
-                if (!response.isTokenIsValid()) {
-                    token = null;
-                    accessTimer.cancel();
-                    accessTimer.onFinish();
-                }
-            }
-        }, intentFilter);
+        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).registerReceiver(validateTokenReceiver, intentFilter);
         accessTimer.start();
         Toast.makeText(getContext(), "Authorization granted.", Toast.LENGTH_SHORT).show();
     }
@@ -402,22 +408,22 @@ public class DirectoryBrowserFragment extends Fragment implements SendFileToServ
     }
 
     @Override
-    public void onPause() {
-
-        super.onPause();
+    public void onDestroy() {
+        cleanUp();
+        super.onDestroy();
     }
 
-    @Override
-    public void onDestroy() {
+    public void cleanUp() {
         authorized = false;
         LocalBroadcastManager.getInstance(getContext().getApplicationContext()).unregisterReceiver(authReceiver);
+        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).unregisterReceiver(deleteFileReceiver);
+        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).unregisterReceiver(getFilesReceiver);
+        LocalBroadcastManager.getInstance(getContext().getApplicationContext()).unregisterReceiver(validateTokenReceiver);
         if (accessTimer != null) {
             accessTimer.cancel();
         }
         alive = false;
-        super.onDestroy();
     }
-
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

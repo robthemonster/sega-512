@@ -26,6 +26,7 @@ public class DirectoryBrowserActivity extends AppCompatActivity implements Direc
 
     @Override
     public void onBackPressed() {
+        fragment.cleanUp();
         getFragmentManager().beginTransaction().remove(fragment).commit();
         super.onBackPressed();
     }
