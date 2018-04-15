@@ -13,6 +13,7 @@
     <string name="upload_file">Upload File</string>
     <string name="yes">yes</string>
     <string name="cancel">cancel</string>
+    <string name="createGroupActivityTitle">Create Group</string>
     <string-array name="loading_memes">
         <item>Constructing Additional Pylons</item>
         <item>Generating Super Secret Stuff</item>

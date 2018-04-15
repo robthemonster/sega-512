@@ -90,6 +90,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                 }
             }
         }, intentFilter);
+        setTitle(R.string.createGroupActivityTitle);
     }
 
     public int validateGroup() {

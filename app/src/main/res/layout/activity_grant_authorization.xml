@@ -8,25 +8,37 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient">
 
-        <TextView
-            android:id="@+id/groupPrompt"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/promptLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/access_request_for_group" />
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/groupNameGrantAuthActivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/groupPrompt" />
+            <TextView
+                android:id="@+id/groupPrompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/access_request_for_group" />
 
+            <TextView
+                android:id="@+id/groupNameGrantAuthActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/groupPrompt"
+                android:layout_centerHorizontal="true"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
         <LinearLayout
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/groupPrompt"
+            android:layout_below="@id/promptLayout"
             android:orientation="horizontal">
 
             <Button
